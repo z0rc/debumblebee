@@ -31,8 +31,6 @@ if [ `id -u` != 0 ]; then
 	exit 1
 fi
 
-exit 0
-
 echo "Welcome to the debumblebee installation v"`cat VERSION`"."
 echo "This script will configure your system to utilize both Intel and nVidia graphics card."
 echo "Are you sure you want to proceed? (Y/N)"
