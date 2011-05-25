@@ -1,0 +1,67 @@
+#!/bin/sh
+
+ARCH=`uname -m`
+
+echo "Installing required packages."
+
+apt-get update
+apt-get -y install nvidia-kernel-dkms nvidia-xconfig
+if [ $? -ne 0 ]; then
+	echo "Package manager failed to install nvidia packages." 1>&2
+	echo "Please check that you have non-free repository enabled." 1>&2
+	exit 2
+fi
+if [ $ARCH = x86_64 ]; then
+	apt-get -y install nvidia-glx-ia32
+	wget -P /tmp http://virtualgl.sourceforge.net/nightly.22/VirtualGL_amd64.deb
+	if [ $? -ne 0 ]; then
+		echo "Failed to download VirtualGL package." 1>&2
+		exit 3
+	fi
+	dpkg -i /tmp/VirtualGL_amd64.deb
+else
+	wget -P /tmp http://virtualgl.sourceforge.net/nightly.22/VirtualGL_i386.deb
+	if [ $? -ne 0 ]; then
+		echo "Failed to download VirtualGL package." 1>&2
+		exit 3
+	fi
+	dpkg -i /tmp/VirtualGL_i386.deb
+fi
+if [ $? -ne 0 ]; then
+	echo "Package manager failed to install VirtualGL." 1>&2
+	exit 4
+fi
+rm -f /tmp/VirtualGL_*.deb
+
+echo
+echo "Installing and configuring support files."
+
+cp debian/xorg.conf.nvidia /etc/X11/
+cp debian/debumblebee /etc/init.d/debumblebee
+cp debian/optirun /usr/local/bin
+if [ $ARCH = x86_64 ]; then
+	cp debian/optirun32 /usr/local/bin
+fi
+
+update-alternatives --set libGL.so /usr/lib/nvidia/diversions/libGL.so
+update-alternatives --set libGL.so.1 /usr/lib/nvidia/diversions/libGL.so.1
+update-alternatives --set libglx.so /usr/lib/nvidia/diversions/libglx.so
+if [ $ARCH = x86_64 ]; then
+	update-alternatives --set ia32-libGL.so.1 /usr/lib32/nvidia/diversions/libGL.so.1
+fi
+mkdir /usr/local/lib/debumblebee
+ln -s /usr/lib/nvidia/libglx.so /usr/local/lib/debumblebee/libglx.so
+modprobe nvidia
+
+CONNECTEDMONITOR=`nvidia-xconfig --query-gpu-info | grep "Display Device 0" | awk '{print $4}' | sed -e 's/[:()]//g'`
+NVIDIABUSID=`nvidia-xconfig --query-gpu-info | grep BusID | awk '{print $4}'`
+sed -i 's/REPLACEWITHBUSID/'$NVIDIABUSID'/g' /etc/X11/xorg.conf.nvidia
+sed -i 's/REPLACEWITHCONNECTEDMONITOR/'$CONNECTEDMONITOR'/g' /etc/X11/xorg.conf.nvidia
+
+echo
+echo "Enabling debumblebee service."
+
+update-rc.d debumblebee defaults
+service debumblebee start
+
+exit 0

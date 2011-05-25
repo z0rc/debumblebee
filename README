@@ -1,102 +1,52 @@
-# ----------------------------------------------------------------------------
-# "Red Bull License" 
-# <mj@casalogic.dk> wrote this file and is providing free support 
-# in any spare time. If you need extended support, you can fuel him up by
-# donating a Red Bull here to get him through the nights..:
-#
-# https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mj%40casalogic
-# %2edk&lc=US&item_name=The%20Bumblebee%20Project%20by%20Martin%20Juhl&amount=
-# 3%2e00&currency_code=EUR&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateC
-# C_LG%2egif%3aNonHosted
-#
-# ----------------------------------------------------------------------------
+debumblebee project
+Service for enabling nVidia graphics cards on laptops with Optimus graphics
+(hybrid Intel/nVidia graphics)
 
-#
-# ----------------------------------------------------------------------------
-# "THE BEER-WARE LICENSE" (Revision 42):
-# <mj@casalogic.dk> wrote this file. As long as you retain this notice you
-# can do whatever you want with this stuff. If we meet some day, and you
-# think
-# this stuff is worth it, you can buy me a beer in return Martin Juhl
-# ----------------------------------------------------------------------------
-#
+Author Igor Urazov <z0rc3r@gmail.com>
+Inspired by bumblebee project by Martin Juhl
 
-#    This file is part of bumblebee.
-#
-#    bumblebee is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    bumblebee is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#   
-#    You should have received a copy of the GNU General Public License
-#    along with bumblebee.  If not, see <http://www.gnu.org/licenses/>.
-#
+Licenced under GPL v3 (see LICENCE).
 
-This project is containing bumblebee (Formerly known as prime-ng)..
+This software is provided 'as-is', without any express or implied warranty. In
+no event will the authors be held liable for any damages arising from the use of
+this software.
 
-bumblebee is Optimus support for Linux, with real offloading, and not
-switchable graphics.. More important.. it works on Optimus Laptops without a
-graphical multiplexer..
-
-Version 1.3.11 of the bumblebee project has been release!!! (version number has
-been reset from the prime-ng project)
-
-The Installation should now be completely automatic...
-
-First of all: If you have any problem... please create a bug report package
-with the bumblebee-bugreport tool..
-
-Then create and issue on github...
-
-This project have had great succes and I need to have a way to easily manage
-support problems..
+Please read INSTALL file before performing any actions.
 
 
-Now 3D is enabled on both the Intel and the nVidia at the same time..
+DESCRIPTION
 
-The Intel card is running the Desktop and the nVidia card can be used for
-the thougher applications with the command "optirun32 <application>" or
-"optirun64 <application>"...
+This is a fork/major rewrite of original bumblebee project. I've made this fork
+because I was very unsatisfied with current bumblebee installation script which
+was a real mess. The main point of this project is to create polished and
+modular version of bumblebee.
 
-So now we just need somebody to write an application for automatically
-balance which applications should be run on which card.. and shut the nVidia
-card down, when not used..
+This project allows you to utilize nVidia graphics card with proprietary driver
+while running main desktop on Intel card. This service is only for Intel/nVidia
+combination, it won't work with Intel/ATI or any other combination.
 
-But still I think it is a good step forward...
+debumblebee is combination of additional X server for nVidia graphics card and
+VirtualGL package which allows to access nVidia X server screen from Intel X
+server screen with full OpenGL support.
 
-Just download the install.sh and the install-files folder..
+Right now this script supports only Debian because I'm running it. Feel free to
+add support of any other distro. I'll gladly accept your changes. If you have
+any questions about adding support please check INSTALL file for detailed
+instructions of what should be done by installation script.
 
-I left the old releases up there in the old/ folder.. if someone needs it..
 
-Machines Confirmed Working:
+USAGE
 
-Machine					User
-Alienware M11X R2			Martin Juhl
-Asus N82Jv				André Ventura
-Asus EeePC 1215N			Ellington Santos
-Asus N61Jv (X64Jv)			Ted
-Acer Aspire 5745PG			Miguel Belmonte
-Dell Vostro 3300			Peter Liedler
-Asus EeePC 1215N			Fedor Indutny
-Dell XPS 15 (L502x)			Sunil Mujumdar
-Dell Vostro 3400			Sunil Mujumdar
-Toshiba Satellite M645-SP4132L		Leonard Camacho
-Asus U43JC				csdaniels1221
-Samsung RF511				Chuong
-CLEVO W150HNQ				Nix Vitae
-Dell XPS 17 L701x			Samuel Leal
-Asus U53JC				Sven Bettscheider
-Asus K52JC				beta992
-Asus U35JC				Martin Yrjölä
-Asus X52JC				Fiox
-Asus N53SV				theshadow124
-Asus U35J				EselSaft
-Asus P52JC				Paszcza
+Check INSTALL file for details. After installation your desktop and all
+applications will be running on Intel card. To run application with nVidia card
+you need to start it with optirun, for example: "optirun glxgears". To start a
+32 bit application on 64 bit arch you should use optirun32.
 
-Status updates can be found here: http://www.martin-juhl.dk or on twitter
-http://twitter.com/martinjuhl
+
+LIMITATIONS
+
+Right now VDPAU video playback isn't supported.
+
+
+If you have any issues please create ticket at
+https://github.com/z0rc/debumblebee

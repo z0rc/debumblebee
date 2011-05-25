@@ -1,0 +1,3 @@
+#!/bin/sh
+
+VGL_DISPLAY=:1 VGL_READBACK=fbo vglrun -c xv -ld /usr/lib32/nvidia $@

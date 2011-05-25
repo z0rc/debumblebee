@@ -1,600 +1,66 @@
-#!/bin/bash -l
+#!/bin/sh
 
-# ----------------------------------------------------------------------------
-# "Red Bull License"
-# <mj@casalogic.dk> wrote this file and is providing free support
-# in any spare time. If you need extended support, you can fuel him up by
-# donating a Red Bull here to get him through the nights..:
+#    debumblebee. Service for Optimus graphics support.
+#    Copyright (C) 2011  Igor Urazov
 #
-# https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mj%40casalogic
-# %2edk&lc=US&item_name=The%20Bumblebee%20Project%20by%20Martin%20Juhl&amount=
-# 3%2e00&currency_code=EUR&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateC
-# C_LG%2egif%3aNonHosted
-# 
-# ----------------------------------------------------------------------------
-
-#
-# ----------------------------------------------------------------------------
-# "THE BEER-WARE LICENSE" (Revision 42):
-# <mj@casalogic.dk> wrote this file. As long as you retain this notice you
-# can do whatever you want with this stuff. If we meet some day, and you think
-# this stuff is worth it, you can buy me a beer in return Martin Juhl
-# ----------------------------------------------------------------------------
-#
-
-#    This file is part of bumblebee.
-#
-#    bumblebee is free software: you can redistribute it and/or modify
+#    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#    bumblebee is distributed in the hope that it will be useful,
+#    This program is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
-#    along with bumblebee.  If not, see <http://www.gnu.org/licenses/>.
-#
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ROOT_UID=0
-
-#Determine Arch x86_64 or i686
 ARCH=`uname -m`
 
-if [ `cat /etc/issue |grep -nir fedora |wc -l` -gt 0 ]; then
-  DISTRO=FEDORA
-elif [ `cat /etc/issue |grep -nir ubuntu |wc -l` -gt 0 ]; then
-  DISTRO=UBUNTU
-elif [ `cat /etc/issue |grep -nir debian |wc -l` -gt 0 ]; then
-  DISTRO=DEBIAN
-elif [ `cat /etc/issue |grep -nir "Arch Linux" |wc -l` -gt 0  ]; then
-  DISTRO=ARCH
-  echo "You are running Arch Linux, please see the buildscript here for support:"
-  echo
-  echo "http://aur.archlinux.org/packages.php?ID=48866"
-  echo
-  read
-  exit 0
+if [ `lsb_release -i -s` = Debian ]; then
+	DISTRO=DEBIAN
+else
+	echo "Sorry, your Linux distribuition isn't supported. Right now this script works only with Debian." 1>&2
+	echo "Please check INSTALL file for manual installation instructions." 1>&2
+	exit 1
 fi
 
-echo
-echo $DISTRO" distribution found."
-echo
-
-if [ $UID != $ROOT_UID ]; then
-    echo "You don't have sufficient privileges to run this script."
-    echo
-    if [ $DISTRO = UBUNTU ]; then
-      echo "Please run the script with: sudo install.sh"
-    elif [ $DISTRO = FEDORA -o $DISTRO = DEBIAN ]; then
-      echo "Please run the script with: sudo -E install.sh"
-    fi
-    exit 1
+if [ `id -u` != 0 ]; then
+	echo "This script should be started with root privileges." 1>&2
+	exit 1
 fi
 
-if [ $HOME = /root ]; then
-    echo "Do not run this script as the root user."
-    echo
-    if [ $DISTRO = UBUNTU ]; then
-      echo "Please run the script with: sudo install.sh"
-    elif [ $DISTRO = FEDORA -o $DISTRO = DEBIAN ]; then
-      echo "Please run the script with: sudo -E install.sh"
-    fi
-    exit 2
-fi
+exit 0
 
-echo "Welcome to the bumblebee installation v.1.3.11"
-echo "Licensed under Red Bull, BEER-WARE License and GPL"
-echo
-echo "This will enable you to utilize both your Intel and nVidia card."
-echo
-echo "Please note that this script will probably only work with Ubuntu, Debian or Fedora based machines."
-echo "and has (by me) only been tested on Ubuntu Natty 11.04 and Fedora 14 but should work on others as well."
-echo
+echo "Welcome to the debumblebee installation v"`cat VERSION`"."
+echo "This script will configure your system to utilize both Intel and nVidia graphics card."
 echo "Are you sure you want to proceed? (Y/N)"
-
-read answer
-
-case "$answer" in
-
-  y|Y)
-  ;;
-
-  *)
-  exit 0
-  ;;
-
+read ANSWER
+case $ANSWER in
+	y|Y) ;;
+	*) exit 2 ;;
 esac
 
-clear
-
-BUMBLEBEEPWD=$PWD
-echo
-echo "Installing needed packages."
-if [ $DISTRO = UBUNTU  ]; then
-  VERSION=`cat /etc/issue | cut -f2 -d" "`
-  if [ $VERSION = 11.04 ]; then
-   echo
-   echo "Ubuntu 11.04 detected."
-   echo
-  else 
-   echo
-   echo "Ubuntu "$VERSION" detected."
-   echo "Adding X-Swat Driver Repository."
-   echo
-   apt-add-repository ppa:ubuntu-x-swat/x-updates
-  fi
-  apt-get update
-  apt-get -y install nvidia-current
-  if [ $? -ne 0 ]; then
-   echo
-   echo "Package manager failed to install needed packages..."
-   echo
-   exit 21
-  fi
-  modprobe -r nouveau
-  modprobe nvidia-current
-elif [ $DISTRO = FEDORA ]; then
-  yum -y install wget binutils gcc kernel-devel mesa-libGL mesa-libGLU
-  if [ $? -ne 0 ]; then
-    echo
-    echo "Package manager failed to install needed packages..."
-    echo
-    exit 21
-  fi
-  rm -rf /tmp/NVIDIA*
-  if [ "$ARCH" = "x86_64" ]; then
-    wget http://us.download.nvidia.com/XFree86/Linux-x86_64/270.41.06/NVIDIA-Linux-x86_64-270.41.06.run -O /tmp/NVIDIA-Linux-driver.run
-  elif [ "$ARCH" = "i686" ]; then
-    wget http://us.download.nvidia.com/XFree86/Linux-x86/270.41.06/NVIDIA-Linux-x86-270.41.06.run -O /tmp/NVIDIA-Linux-driver.run
-  fi
-  chmod +x /tmp/NVIDIA-Linux-driver.run
-  /tmp/NVIDIA-Linux-driver.run --no-x-check -a -K
-  cd /tmp/
-  /tmp/NVIDIA-Linux-driver.run -x
-  cd $BUMBLEBEEPWD
-  depmod -a
-  ldconfig
-  modprobe -r nouveau
-  modprobe nvidia
-  if [ "$ARCH" = "x86_64" ]; then
-    rm -rf /usr/lib64/nvidia-current/
-    rm -rf /usr/lib/nvidia-current/
-    mkdir -p /usr/lib64/nvidia-current/
-    mv /tmp/NVIDIA-Linux-x86_64-270.41.06/* /usr/lib64/nvidia-current/
-    ln -s /usr/lib64/nvidia-current/32 /usr/lib/nvidia-current
-    mkdir -p /usr/lib64/nvidia-current/xorg
-    ln -s /usr/lib64/nvidia-current/libglx.so.270.41.06 /usr/lib64/nvidia-current/xorg/libglx.so
-    ln -s /usr/lib64/nvidia-current/nvidia_drv.so /usr/lib64/nvidia-current/xorg/nvidia_drv.so
-    ln -s /usr/lib64/nvidia-current/xorg /usr/lib/nvidia-current/xorg
-    ln -s /usr/lib64/xorg/ /usr/lib/xorg
-  elif [ "$ARCH" = "i686" ]; then
-    rm -rf /usr/lib/nvidia-current/
-    mkdir -p /usr/lib/nvidia-current/
-    mv /tmp/NVIDIA-Linux-x86-270.41.06/* /usr/lib/nvidia-current/
-    mkdir -p /usr/lib/nvidia-current/xorg
-    ln -s /usr/lib/nvidia-current/libglx.so.270.41.06 /usr/lib/nvidia-current/xorg/libglx.so
-    ln -s /usr/lib/nvidia-current/nvidia_drv.so /usr/lib/nvidia-current/xorg/nvidia_drv.so
-  fi
-elif [ $DISTRO = DEBIAN ]; then
-  apt-get update
-  apt-get -y install nvidia-kernel-dkms
-  if [ $? -ne 0 ]; then
-   echo
-   echo "Package manager failed to install needed packages..."
-   echo "Please check that you have non-free repository enabled."
-   echo
-   exit 21
-  fi
-  modprobe -r nouveau
-  modprobe nvidia
+cd install-files
+case $DISTRO in
+	DEBIAN) sh debian.install ;;
+esac
+if [ $? -ne 0 ]; then
+	exit 1
 fi
-
-echo "Backing up Configuration"
-if [ $DISTRO = UBUNTU -o $DISTRO = UBUNTU ]; then
-  if [ `cat /etc/bash.bashrc |grep VGL |wc -l` -ne 0 ]; then
-    cp /etc/bash.bashrc.optiorig /etc/bash.bashrc
-  fi
-elif [ $DISTRO = FEDORA ]; then
-  if [ `cat /etc/bashrc |grep VGL |wc -l` -ne 0 ]; then
-    cp /etc/bashrc.optiorig /etc/bashrc
-  fi
-fi
-
-cp -n /etc/modprobe.d/blacklist.conf /etc/modprobe.d/blacklist.conf.optiorig
-cp -n /etc/modules /etc/modules.optiorig
-cp -n /etc/X11/xorg.conf /etc/X11/xorg.conf.optiorig
 
 echo
-echo "Installing Optimus Configuration and files"
-# Intel video card perfectly works whithout any custom configuration on my system
-if [ $DISTRO != DEBIAN ]; then
-  cp install-files/xorg.conf.intel /etc/X11/xorg.conf
-fi
-cp install-files/xorg.conf.nvidia /etc/X11/
-
-if [ $DISTRO = UBUNTU -o $DISTRO = DEBIAN ]; then
-  rm -rf /etc/X11/bumblebee
-  if [ $DISTRO = UBUNTU ]; then
-    cp -a install-files/bumblebee/ubuntu /etc/X11/bumblebee
-  elif [ $DISTRO = DEBIAN ]; then
-    cp -a install-files/bumblebee/debian /etc/X11/bumblebee
-  fi
-  cp install-files/bumblebee.script /etc/init.d/bumblebee
-  cp -n /etc/bash.bashrc /etc/bash.bashrc.optiorig
-elif [ $DISTRO = FEDORA ]; then
-  cp install-files/bumblebee.script.fedora /etc/init.d/bumblebee
-  cp -n /etc/bashrc /etc/bashrc.optiorig
-fi
-  cp install-files/virtualgl.conf /etc/modprobe.d/
-  if [ $DISTRO != DEBIAN ]; then
-    cp install-files/optimusXserver /usr/local/bin/
-  fi
-  cp install-files/bumblebee-bugreport /usr/local/bin/
-  cp install-files/bumblebee-uninstall /usr/local/bin/
-if [ "$ARCH" = "x86_64" ]; then
-  if [ $DISTRO != DEBIAN ]; then
-    cp install-files/optirun32 /usr/local/bin/
-    cp install-files/optirun64 /usr/local/bin/
-  elif [ $DISTRO = DEBIAN ]; then
-    cp install-files/optirun32.debian /usr/local/bin/optirun32
-    cp install-files/optirun64.debian /usr/local/bin/optirun64
-  fi
-  ln -s /usr/local/bin/optirun64 /usr/local/bin/optirun
-  chmod +x /usr/local/bin/optirun*
+echo "Installation completed."
+if [ $ARCH = x86_64 ]; then
+	echo "Now you should be able to start applications with \"optirun <application>\" or \"optirun32 <application>\"."
+	echo "optirun32 can be used for legacy 32 bit applications and wine games. Everything else should work with optirun."
 else
-  cp install-files/optirun32 /usr/local/bin/optirun
-  chmod +x /usr/local/bin/optirun
+	echo "Now you should be able to start applications with \"optirun <application>\"."
 fi
-
-if [ $DISTRO = UBUNTU -o $DISTRO = DEBIAN ]; then
-  if [ "$ARCH" = "x86_64" ]; then
-    echo
-    echo "64-bit system detected"
-    echo
-    dpkg -i install-files/VirtualGL_amd64.deb
-  elif [ "$ARCH" = "i686" ]; then
-    echo
-    echo "32-bit system detected"
-    echo
-    dpkg -i install-files/VirtualGL_i386.deb
-  fi
-  if [ $? -ne 0 ]; then
-    echo
-    echo "Package manager failed to install VirtualGL..."
-    echo
-    exit 20
-  fi
-  if [ $DISTRO = UBUNTU ]; then
-    update-alternatives --remove gl_conf /usr/lib/nvidia-current/ld.so.conf
-    rm /etc/alternatives/xorg_extra_modules
-    rm /etc/alternatives/xorg_extra_modules-bumblebee
-    ln -s /usr/lib/nvidia-current/xorg /etc/alternatives/xorg_extra_modules-bumblebee
-    ldconfig
-  elif [ $DISTRO = DEBIAN ]; then
-    update-alternatives --remove libglx.so /usr/lib/nvidia/libglx.so
-    update-alternatives --remove libGL.so.1 /usr/lib/nvidia/libGL.so.1
-    mkdir /usr/local/lib/bumblebee
-    ln -s /usr/lib/nvidia/libglx.so /usr/local/lib/bumblebee/libglx.so
-  fi
-elif [ $DISTRO = FEDORA  ]; then
-  if [ "$ARCH" = "x86_64" ]; then
-    echo
-    echo "64-bit system detected"
-    echo
-    echo $PWD
-    yum -y --nogpgcheck install install-files/VirtualGL.x86_64.rpm
-  elif [ "$ARCH" = "i686" ]; then
-    echo
-    echo "32-bit system detected"
-    echo
-    yum -y --nogpgcheck install install-files/VirtualGL.i386.rpm
-  fi
-  if [ $? -ne 0 ]; then
-    echo
-    echo "Package manager failed to install VirtualGL..."
-    echo
-    exit 20
-  fi
-fi
-
-if [ $DISTRO != DEBIAN ]; then
-  chmod +x /usr/local/bin/optimusXserver
-fi
-chmod +x /usr/local/bin/bumblebee-bugreport
-
-if [ "`cat /etc/modprobe.d/blacklist.conf |grep "blacklist nouveau" |wc -l`" -eq "0" ]; then
-  echo "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
-fi
-
-if [ $DISTRO = UBUNTU -o $DISTRO = FEDORA ]; then
-  if [ "`cat /etc/modules |grep "nvidia-current" |wc -l`" -eq "0" ]; then
-    echo "nvidia-current" >> /etc/modules
-  fi
-elif [ $DISTRO = DEBIAN ]; then
-  if [ "`cat /etc/modules |grep "nvidia" |wc -l`" -eq "0" ]; then
-    echo "nvidia" >> /etc/modules
-  fi
-fi
-
-if [ $DISTRO != DEBIAN ]; then
-  INTELBUSID="PCI:"`lspci -m | grep VGA | grep Intel | cut -f1 -d: | sed 's/0//'`":"`lspci -m | grep VGA | grep Intel | cut -f2 -d: | cut -f1 -d. | sed 's/0//'`":"`lspci -m | grep VGA | grep Intel | cut -f2 -d. | cut -f1 -d" "`
-fi
-
-if [ `lspci -m | grep VGA | wc -l` -eq 2 ]; then 
-  NVIDIABUSID="PCI:"`lspci -m | grep VGA | grep nVidia | cut -f1 -d: | sed 's/0//'`":"`lspci -m | grep VGA | grep nVidia | cut -f2 -d: | cut -f1 -d. | sed 's/0//'`":"`lspci -m | grep VGA | grep nVidia | cut -f2 -d. | cut -f1 -d" "`
-elif [ `lspci -m | grep 3D | wc -l` -eq 1 ]; then
-  NVIDIABUSID="PCI:"`lspci -m | grep 3D | grep nVidia | cut -f1 -d: | sed 's/0//'`":"`lspci -m | grep 3D | grep nVidia | cut -f2 -d: | cut -f1 -d. | sed 's/0//'`":"`lspci -m | grep 3D | grep nVidia | cut -f2 -d. | cut -f1 -d" "`
-fi
-else
-  echo
-  echo "The BusID of the nVidia card can't be determined"
-  echo "You must correct this manually in /etc/X11/xorg.conf.nvidia"
-  echo "Please report this problem."
-  echo
-  echo "Press Any Key to continue."
-  echo
-  read
-fi
-
-clear
-
+echo "You may check the output of \"optirun glxgears -info\" for confirmation that installation was successfull."
 echo
-echo "Changing Configuration to match your Machine."
+echo "                  https://github.com/z0rc3r/debumblebee"
 echo
-
-if [ $DISTRO != DEBIAN ]; then
-  sed -i 's/REPLACEWITHBUSID/'$INTELBUSID'/g' /etc/X11/xorg.conf
-fi
-sed -i 's/REPLACEWITHBUSID/'$NVIDIABUSID'/g' /etc/X11/xorg.conf.nvidia
-
-CONNECTEDMONITOR="UNDEFINED"
-
-while [ "$CONNECTEDMONITOR" = "UNDEFINED" ]; do
-  echo
-  echo "Select your Laptop:"
-  echo "1) Alienware M11X"
-  echo "2) Dell XPS 15/17"
-  echo "3) CLEVO W150HNQ"
-  echo "4) Asus EeePC 1215N"
-  echo "5) Acer Aspire 5745PG"
-  echo "6) Dell Vostro 3300"
-  echo "7) Dell Vostro 3400"
-  echo "8) Samsung RF511"
-  echo "9) Toshiba Satellite M645-SP4132L"
-  echo "10) Asus U35J/U43JC/U35JC/U43JC/U53JC/P52JC/K52JC/X52JC/N53SV/N61JV/X64JV/K53SJ"
-  #echo "11) "
-  #echo "12) "
-  #echo "13) "
-  echo
-  echo "97) Manually Set Output to CRT-0"
-  echo "98) Manually Set Output to DFP-0"
-  echo "99) Manually Enter Output"
-  echo
-  read machine
-  echo
-
-  case "$machine" in
-
-    1)
-    CONNECTEDMONITOR="CRT-0"
-    ;;
-
-    2)
-    CONNECTEDMONITOR="CRT-0"
-    ;;
-
-    3)
-    CONNECTEDMONITOR="DFP-0"
-    ;;
-
-    4)
-    CONNECTEDMONITOR="DFP-0"
-    ;;
-
-    5)
-    CONNECTEDMONITOR="DFP-0"
-    ;;
-
-    6)
-    CONNECTEDMONITOR="DFP-0"
-    ;;
-
-    7)
-    CONNECTEDMONITOR="CRT-0"
-    ;;
-
-    8)
-    CONNECTEDMONITOR="CRT-0"
-    ;;
-
-    9)
-    CONNECTEDMONITOR="CRT-0"
-    ;;
-
-    10)
-    CONNECTEDMONITOR="CRT-0"
-    ;;
-
-    #11)
-    #CONNECTEDMONITOR=""
-    #;;
-
-    #12)
-    #CONNECTEDMONITOR=""
-    #;;
-
-    #13)
-    #CONNECTEDMONITOR=""
-    #;;
-
-
-    97)
-    CONNECTEDMONITOR="CRT-0"
-    ;;
-
-    98)
-    CONNECTEDMONITOR="DFP-0"
-    ;;
-
-    99)
-    echo
-    echo "Enter output device for nVidia Card:"
-    echo
-    read manualinput
-    CONNECTEDMONITOR=`echo $manualinput`
-    ;;
-
-    *)
-    echo
-    echo "Please choose a valid option, Press any key to try again."
-    read
-    clear
-    ;;
-
-  esac
-
-done
-
-echo
-echo "Setting output device to: $CONNECTEDMONITOR"
-echo
-
-sed -i 's/REPLACEWITHCONNECTEDMONITOR/'$CONNECTEDMONITOR'/g' /etc/X11/xorg.conf.nvidia
-
-echo
-echo "Enabling Optimus Service"
-
-if [ $DISTRO = UBUNTU -o $DISTRO = DEBIAN ]; then
-  update-rc.d bumblebee defaults
-elif [ $DISTRO = FEDORA  ]; then
-  chkconfig bumblebee on
-fi
-
-echo
-echo "Setting up Enviroment variables"
-echo
-
-IMAGETRANSPORT="UNDEFINED"
-
-while [ "$IMAGETRANSPORT" = "UNDEFINED" ]; do
-
-  clear
-
-  echo
-  echo "The Image Transport is how the images are transferred from the"
-  echo "nVidia card to the Intel card, people has different experiences of"
-  echo "performance, but just select the default if you are in doubt."
-  echo
-  echo "I recently found out that yuv and jpeg both has some lagging"
-  echo "this is only noticable in fast moving games, such as 1st person"
-  echo "shooters and for me, its only good enough with xv, even though"
-  echo "xv sets down performance a little bit."
-  echo
-  echo "1) YUV"
-  echo "2) JPEG"
-  echo "3) PROXY"
-  echo "4) XV (default)"
-  echo "5) RGB"
-  echo
-  read machine
-  echo
-
-  case "$machine" in
-
-    1)
-    IMAGETRANSPORT="yuv"
-    ;;
-
-    2)
-    IMAGETRANSPORT="jpeg"
-    ;;
-
-    3)
-    IMAGETRANSPORT="proxy"
-    ;;
-
-    4)
-    IMAGETRANSPORT="xv"
-    ;;
-
-    5)
-    IMAGETRANSPORT="rgb"
-    ;;
-
-    *)
-    echo
-    echo "Please choose a valid option. Press any key to try again."
-    read
-    clear
-    ;;
-
-  esac
-
-done
-
-
-if [ $DISTRO = UBUNTU -o $DISTRO = DEBIAN ]; then
-  echo "VGL_DISPLAY=:1
-  export VGL_DISPLAY
-  VGL_COMPRESS=$IMAGETRANSPORT
-  export VGL_COMPRESS
-  VGL_READBACK=fbo
-  export VGL_READBACK" >> /etc/bash.bashrc
-elif [ $DISTRO = FEDORA ]; then
-  echo "VGL_DISPLAY=:1
-  export VGL_DISPLAY
-  VGL_COMPRESS=$IMAGETRANSPORT
-  export VGL_COMPRESS
-  VGL_READBACK=fbo
-  export VGL_READBACK" >> /etc/bashrc
-fi
-
-echo '#!/bin/sh' > /usr/bin/vglclient-service
-echo 'vglclient -gl' >> /usr/bin/vglclient-service
-chmod +x /usr/bin/vglclient-service
-
-if [ -d $HOME/.kde/Autostart ]; then
-  if [ -f $HOME/.kde/Autostart/vglclient-service ]; then
-    rm $HOME/.kde/Autostart/vglclient-service
-  fi
-  ln -s /usr/bin/vglclient-service $HOME/.kde/Autostart/vglclient-service
-elif [ -d $HOME/.config/autostart ]; then
-  if [ -f $HOME/.config/autostart/vglclient-service ]; then
-    rm $HOME/.config/autostart/vglclient-service
-  fi
-  ln -s /usr/bin/vglclient-service $HOME/.config/autostart/vglclient-service
-fi
-
-/etc/init.d/bumblebee start
-/usr/bin/vglclient-service &
-
-echo
-echo "Ok... Installation complete..."
-echo
-echo "Now you need to make sure that the command \"vglclient -gl\" is run after your Desktop Enviroment is started."
-echo
-echo "In KDE this is done by this script. Thanks to Peter Liedler."
-echo
-echo "In GNOME this is done by this script. Thanks to Peter Liedler."
-echo
-if [ "$ARCH" = "x86_64" ]; then
-  echo "After that you should be able to start applications with \"optirun32 <application>\" or \"optirun64 <application>\"."
-  echo "optirun32 can be used for legacy 32-bit applications and Wine Games. Everything else should work on optirun64."
-  echo "But... if one doesn't work... try the other."
-elif [ "$ARCH" = "i686" ]; then
-  echo "After that you should be able to start applications with \"optirun <application>\"."
-fi
-echo
-echo "If you have any problems in or after the installation, please try to run the bumblebee-uninstall script and then"
-echo "rerun this script... if that doesn't work: please run the bumblebee-bugreport tool and send me a bugreport."
-echo
-echo "Or even better.. create an issue on github... this really makes bugfixing much easier for me and faster for you."
-echo
-echo "Good luck... MrMEEE / Martin Juhl"
-echo
-echo "http://www.martin-juhl.dk, http://twitter.com/martinjuhl, https://github.com/MrMEEE/bumblebee"
 
 exit 0

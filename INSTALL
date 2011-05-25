@@ -1,0 +1,56 @@
+AUTOMATIC INSTALLATION
+
+With Debian you may run install.sh under root user to get everything working.
+
+
+MANUAL INSTALLATION
+
+1) Install proprietary nVidia graphics driver in distro's preferred way (under
+   Debian it's "apt-get install nvidia-kernel-dkms").
+   - Additionally you may need package with nvidia-xconfig, if it isn't provided
+     with default installation;
+   - If you are running 64 bit arch and want to use 32 bit apps (mostly through
+     wine), install additional 32 bit nVidia libraries (on Debian it can be
+     archived via "apt-get install nvidia-glx-ia32");
+2) You need to alter libGL.so library, libglx.so Xorg module and any other
+   libraries replaced by nVidia back to free version, but keep nVidia version
+   somewhere (usually they are placed in /usr/lib/nvidia*). In Debian based
+   distros it should be done via alternatives mechanism, please check
+   update-alternatives manual page and /etc/alternatives folder.
+3) Install the VirtualGL package from http://www.virtualgl.org/.
+4) Prepare additional nVidia X server init script and special xorg.conf for it.
+   You may check install-files/debian/debumblebee init script and
+   install-files/debian/xorg.conf.nvidia for configuration. The main points are:
+   - init script should start after any nvidia initializations (nvidia-kernel
+     on Debian) and after kdm/gdm;
+   - nVidia X server should use nVidia's libraries libGL.so and libglx.so. The
+     libGL.so library could be loaded via LD_LIBRARY_PATH and the Xorg module
+     should be loaded via X command line option -modulepath (at least it should
+     be loaded BEFORE the free libglx.so module). To archive this in Debian
+     create a /usr/local/lib/debumblebee folder, symlink nVidia libglx.so there
+     and launch X server with the following option:
+     "-modulepath /usr/local/lib/debumblebee,/usr/lib/xorg/modules";
+   - X server should use second screen ":1 vt9";
+   - X server should use custom xorg configuration for nVidia card:
+     "-config /etc/X11/xorg.conf.nvidia";
+   - in xorg.conf.nvidia replace:
+     - BusID with nVidia card PCI ID. You can obtain it from lspci or
+       "nvidia-xconfig --query-gpu-info" output, in xorg.conf.nvidia it should
+       be something like "PCI:1:0:0";
+     - Option ConnectedMonitor should be replaced with "CRT-0" or "DFP-0", this
+       depends on your laptop model, you can find the correct one from
+       "nvidia-xconfig --query-gpu-info" output;
+6) Copy optirun and optirun32 (only for 64 bit arch, if you want to use 32 bit
+   applications) files from install-files/debian folder somewhere into your
+   system wide PATH, /usr/local/bin is recommended place.
+7) If you followed this instruction closely, everything should be working. You
+   may check outputs of "glxgears -info" and "optirun glxgears -info" for
+   confirmation.
+
+
+TUNING
+
+By default we are using method proxy from vglrun for OpenGL transfer. You can
+try to switch to another method, if this one unsatisfies you. Please check the
+output of "vglrun -h" and modify /usr/local/bin/optirun (and optirun32, if it
+presents).

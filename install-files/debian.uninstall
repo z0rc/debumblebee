@@ -1,0 +1,36 @@
+#!/bin/sh
+
+ARCH=`uname -m`
+
+echo "Stopping debumblebee service."
+
+service debumblebee stop
+rmmod nvidia
+
+echo
+echo "Removing custom debumblebee files."
+
+update-rc.d debumblebee remove
+
+rm -f /etc/init.d/debumblebee
+rm -f /etc/X11/xorg.conf.nvidia
+rm -f /usr/local/bin/optirun*
+rm -rf /usr/local/lib/debumblebee
+
+echo
+echo "Removing packages."
+
+apt-get -y purge nvidia-kernel-dkms libgl1-nvidia-alternatives libglx-nvidia-alternatives libgl1-nvidia-glx libvdpau1 nvidia-kernel-common nvidia-vdpau-driver nvidia-xconfig virtualgl
+if [ $? -ne 0 ]; then
+	echo "Failed to remove packages." 1>&2
+	exit 1
+fi
+if [ $ARCH = x86_64 ]; then
+	apt-get -y purge libgl1-nvidia-alternatives-ia32 libgl1-nvidia-glx-ia32 lib32vdpau1 nvidia-vdpau-driver-ia32
+	if [ $? -ne 0 ]; then
+		echo "Failed to remove packages." 1>&2
+		exit 1
+	fi
+fi
+
+exit 0
