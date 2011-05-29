@@ -1,6 +1,10 @@
 AUTOMATIC INSTALLATION
 
 With Debian you may run install.sh under root user to get everything working.
+This script is completely tested and working on 64 bit Sid. If you are running
+Testing, Stable or different architecture and debumblebee isn't working, then
+please check Manual Installaction section. Unfortunately, I can provide limited
+support for them.
 
 
 MANUAL INSTALLATION
@@ -40,17 +44,25 @@ MANUAL INSTALLATION
      - Option ConnectedMonitor should be replaced with "CRT-0" or "DFP-0", this
        depends on your laptop model, you can find the correct one from
        "nvidia-xconfig --query-gpu-info" output;
-6) Copy optirun and optirun32 (only for 64 bit arch, if you want to use 32 bit
+6) Copy install-files/debian/debumblebee.default to /etc/default/debumblebee,
+   install-files/debian/debumblebee.sudoers to /etc/default/debumblebee. This is
+   required to enable on demand support. Also you need to make sure that sudo
+   package is installed.
+7) Copy optirun and optirun32 (only for 64 bit arch, if you want to use 32 bit
    applications) files from install-files/debian folder somewhere into your
    system wide PATH, /usr/local/bin is recommended place.
-7) If you followed this instruction closely, everything should be working. You
+8) If you followed this instruction closely, everything should be working. You
    may check outputs of "glxgears -info" and "optirun glxgears -info" for
    confirmation.
 
 
-TUNING
+CONFIGURING
+
+Configuration file is /etc/default/debumblebee.
 
 By default we are using method proxy from vglrun for OpenGL transfer. You can
-try to switch to another method, if this one unsatisfies you. Please check the
-output of "vglrun -h" and modify /usr/local/bin/optirun (and optirun32, if it
-presents).
+to switch to another method, if this one unsatisfies you. Please check the
+output of "vglrun -h".
+
+By default debumblebee configured to start only on demand invoked from optirun
+script. You can change this behavior in configuration file.

@@ -5,14 +5,14 @@ ARCH=`uname -m`
 echo "Installing required packages."
 
 apt-get update
-apt-get -y install nvidia-kernel-dkms nvidia-xconfig
+apt-get -y install nvidia-kernel-dkms nvidia-xconfig sudo
 if [ $? -ne 0 ]; then
 	echo "Package manager failed to install nvidia packages." 1>&2
 	echo "Please check that you have non-free repository enabled." 1>&2
 	exit 2
 fi
 if [ $ARCH = x86_64 ]; then
-	apt-get -y install nvidia-glx-ia32
+	apt-get -y install libgl1-nvidia-glx-ia32
 	wget -P /tmp http://virtualgl.sourceforge.net/nightly.22/VirtualGL_amd64.deb
 	if [ $? -ne 0 ]; then
 		echo "Failed to download VirtualGL package." 1>&2
@@ -38,6 +38,8 @@ echo "Installing and configuring support files."
 
 cp debian/xorg.conf.nvidia /etc/X11/
 cp debian/debumblebee /etc/init.d/debumblebee
+cp debian/debumblebee.default /etc/default/debumblebee
+cp debian/debumblebee.sudoers /etc/sudoers.d/debumblebee
 cp debian/optirun /usr/local/bin
 if [ $ARCH = x86_64 ]; then
 	cp debian/optirun32 /usr/local/bin
@@ -62,6 +64,5 @@ echo
 echo "Enabling debumblebee service."
 
 update-rc.d debumblebee defaults
-service debumblebee start
 
 exit 0

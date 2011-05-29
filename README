@@ -48,5 +48,11 @@ LIMITATIONS
 Right now VDPAU video playback isn't supported.
 
 
+TODO
+
+* Add power save support by disabling nVidia card via acpi when it isn't used.
+* Rewrite optirun with perl, so it can use SGID bit which allows to apply more
+  strict security permissions and get rid of sudoers file.
+
 If you have any issues please create ticket at
 https://github.com/z0rc/debumblebee

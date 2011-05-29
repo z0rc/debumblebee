@@ -1,3 +1,34 @@
 #!/bin/sh
 
-VGL_DISPLAY=:1 VGL_READBACK=fbo vglrun -c proxy -ld /usr/lib/nvidia $@
+if [ -r /etc/default/debumblebee ]; then
+	. /etc/default/debumblebee
+else
+	VGL_DISPLAY=:1
+	VGL_COMPRESS=proxy
+fi
+
+if [ "$ON_DEMAND" = "yes" ]; then
+	if [ -e $PIDFILE ]; then
+		cat $PIDFILE | while read pid; do
+			if [ -n $pid ]; then
+				if ! ps -p $pid | grep optirun; then
+					sed -i '/'$pid'/d' $PIDFILE
+				fi
+			fi
+		done
+	fi
+	if [ ! -s $PIDFILE ]; then
+		sudo /etc/init.d/debumblebee demandon
+	fi
+	echo $$ >> $PIDFILE
+fi
+
+vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld /usr/lib/nvidia $@
+
+if [ "$ON_DEMAND" = "yes" ]; then
+	sed -i '/'$$'/d' $PIDFILE
+	if [ ! -s $PIDFILE ]; then
+		rm -f $PIDFILE
+		sudo /etc/init.d/debumblebee demandoff
+	fi
+fi
