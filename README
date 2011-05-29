@@ -54,5 +54,6 @@ TODO
 * Rewrite optirun with perl, so it can use SGID bit which allows to apply more
   strict security permissions and get rid of sudoers file.
 
+
 If you have any issues please create ticket at
 https://github.com/z0rc/debumblebee
