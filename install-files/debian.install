@@ -41,6 +41,7 @@ cp debian/debumblebee /etc/init.d/debumblebee
 cp debian/debumblebee.default /etc/default/debumblebee
 cp debian/debumblebee.sudoers /etc/sudoers.d/debumblebee
 cp debian/optirun /usr/local/bin
+cp debian/optirun.bash /etc/bash_completion.d/optirun
 if [ $ARCH = x86_64 ]; then
 	cp debian/optirun32 /usr/local/bin
 fi
