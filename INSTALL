@@ -66,3 +66,31 @@ of "vglrun -h".
 
 By default debumblebee configured to start only on demand invoked from optirun
 script. You can change this behavior in configuration file.
+
+
+POWER SAVE OPTION
+
+There is POWER_SAVE option in configuration file. If you set it to "yes", than
+the debumblebee init script will disable nVidia when it isn't used. This should
+lower your power consumtion and increase battery's life. Before enabling this
+option you need to do two things.
+
+First is to build and install acpi_call module, you can find in
+install-files/contrib/acpi_call folder. Installation script requires root rights
+and dkms (it was installed with nVidia modules). This module is used for passing
+command strings to acpi subsystem.
+
+Second is to prepare enablecard and disablecard shell scripts. You can find
+samples in install-files/contrib/power_off_on folder. Copy them to
+/usr/local/bin folder. You MUST change command strings passed in those scripts
+depending on your laptop. How do you find them? There is several ways. First
+check the http://hybrid-graphics-linux.tuxfamily.org/index.php?title=ACPI_calls
+link. Then you can check original bumblebee repo, it already has a bunch of
+confirmied scripts. Also you may use test_off.sh script from acpi_call.
+
+After preparation is completed you may enable POWER_SAVE option.
+
+Right now I'm not going to enable this feature by default nor adding it to
+automatic installation. This is still experimental feature and may not work as
+it should. For example my own ASUS K53SJ starts to run coolers at full speed
+after turning off the nVidia card.

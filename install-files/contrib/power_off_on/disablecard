@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# This script should contain the command(s) nessesary to switch off the nVidia card.
+
+rmmod nvidia
+
+if lsmod | grep -q nvidia; then
+	echo "Error: could not unload nvidia module, leaving card turned on."
+	exit
+fi
+
+modprobe acpi_call
+
+if ! lsmod | grep -q acpi_call; then
+	echo "Error: acpi_call module not loaded."
+	exit
+fi
+
+acpi_call () {
+	echo "$*" > /proc/acpi/call
+	result=$(cat /proc/acpi/call)
+	case "$result" in
+		failed*) echo "Disabling nVidia card failed."  ;;
+		*) echo "Disabling nVidia card succeded." ;;
+	esac
+}
+
+# Replace this command string depending on your laptop model.
+echo $(acpi_call "\_SB_.PCI0.PEGR.GFX0._OFF")

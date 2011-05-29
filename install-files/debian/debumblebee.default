@@ -2,10 +2,9 @@
 # Enabled by default.
 ON_DEMAND=yes
 
-# Power off nVidia card when it isn't running.
+# Power off nVidia card when it isn't running. Requires ON_DEMAND to be "yes".
 # Experimental feature, check INSTALL file for instructions before enabling.
 # Disabled by default.
-# TODO
 POWER_SAVE=no
 
 # X transport method used for transfer rendered data from nVidia to Intel card.
@@ -15,5 +14,9 @@ VGL_COMPRESS=proxy
 # Display used by nVidia X server.
 VGL_DISPLAY=:1
 
-# Pidfile used by optirun script
+# Pidfile used by optirun script.
 PIDFILE=/tmp/optirun.pid
+
+# Scripts used to switch nVidia card on and off.
+ENABLECARD=/usr/local/bin/enablecard
+DISABLECARD=/usr/local/bin/disablecard

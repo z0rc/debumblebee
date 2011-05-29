@@ -47,9 +47,16 @@ do_stop()
 case $1 in
   start)
 	if [ "$ON_DEMAND" = "yes" ]; then
-		log_daemon_msg "Not starting $DESC. ON_DEMAND option is enabled" "$NAME"
-		log_end_msg 0
-		exit 0
+		if [ "$POWER_SAVE" = "yes" -a -x "$DISABLECARD" ]; then
+			log_daemon_msg "Disabling nVidia card. POWER_SAVE option is enabled" "$NAME"
+			log_end_msg 0
+			$DISABLECARD
+			exit 0
+		else
+			log_daemon_msg "Not starting $DESC. ON_DEMAND option is enabled" "$NAME"
+			log_end_msg 0
+			exit 0
+		fi
 	fi
 	log_daemon_msg "Starting $DESC" "$NAME"
 	do_start
@@ -67,9 +74,15 @@ case $1 in
 	esac
 	;;
   demandon)
+	if [ "$POWER_SAVE" = "yes" -a -x "$ENABLECARD" ]; then
+		$ENABLECARD
+	fi
 	do_start ;;
   demandoff)
 	do_stop ;;
+	if [ "$POWER_SAVE" = "yes" -a -x "$DISABLECARD" ]; then
+		$DISABLECARD
+	fi
   status)
 	status_of_proc -p $PIDFILE "$DAEMON" "$NAME" ;;
   restart)
