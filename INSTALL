@@ -15,7 +15,7 @@ MANUAL INSTALLATION
      with default installation;
    - If you are running 64 bit arch and want to use 32 bit apps (mostly through
      wine), install additional 32 bit nVidia libraries (on Debian it can be
-     archived via "apt-get install nvidia-glx-ia32");
+     archived via "apt-get install libgl1-nvidia-glx-ia32");
 2) You need to alter libGL.so library, libglx.so Xorg module and any other
    libraries replaced by nVidia back to free version, but keep nVidia version
    somewhere (usually they are placed in /usr/lib/nvidia*). In Debian based
@@ -45,8 +45,8 @@ MANUAL INSTALLATION
        depends on your laptop model, you can find the correct one from
        "nvidia-xconfig --query-gpu-info" output;
 6) Copy install-files/debian/debumblebee.default to /etc/default/debumblebee,
-   install-files/debian/debumblebee.sudoers to /etc/default/debumblebee. This is
-   required to enable on demand support. Also you need to make sure that sudo
+   install-files/debian/debumblebee.sudoers to /etc/sudoers.d/debumblebee. This
+   is required to enable on demand support. Also you need to make sure that sudo
    package is installed.
 7) Copy optirun and optirun32 (only for 64 bit arch, if you want to use 32 bit
    applications) files from install-files/debian folder somewhere into your
