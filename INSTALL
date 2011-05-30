@@ -75,7 +75,7 @@ the debumblebee init script will disable nVidia when it isn't used. This should
 lower your power consumtion and increase battery's life. Before enabling this
 option you need to do two things.
 
-First is to build and install acpi_call module, you can find in
+First is to build and install acpi_call module, you can find it in
 install-files/contrib/acpi_call folder. Installation script requires root rights
 and dkms (it was installed with nVidia modules). This module is used for passing
 command strings to acpi subsystem.
