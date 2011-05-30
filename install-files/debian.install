@@ -56,10 +56,8 @@ mkdir /usr/local/lib/debumblebee
 ln -s /usr/lib/nvidia/libglx.so /usr/local/lib/debumblebee/libglx.so
 modprobe nvidia
 
-CONNECTEDMONITOR=`nvidia-xconfig --query-gpu-info | grep "Display Device 0" | awk '{print $4}' | sed -e 's/[:()]//g'`
 NVIDIABUSID=`nvidia-xconfig --query-gpu-info | grep BusID | awk '{print $4}'`
 sed -i 's/REPLACEWITHBUSID/'$NVIDIABUSID'/g' /etc/X11/xorg.conf.nvidia
-sed -i 's/REPLACEWITHCONNECTEDMONITOR/'$CONNECTEDMONITOR'/g' /etc/X11/xorg.conf.nvidia
 
 echo
 echo "Enabling debumblebee service."

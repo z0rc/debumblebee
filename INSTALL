@@ -41,9 +41,6 @@ MANUAL INSTALLATION
      - BusID with nVidia card PCI ID. You can obtain it from lspci or
        "nvidia-xconfig --query-gpu-info" output, in xorg.conf.nvidia it should
        be something like "PCI:1:0:0";
-     - Option ConnectedMonitor should be replaced with "CRT-0" or "DFP-0", this
-       depends on your laptop model, you can find the correct one from
-       "nvidia-xconfig --query-gpu-info" output;
 6) Copy install-files/debian/debumblebee.default to /etc/default/debumblebee,
    install-files/debian/debumblebee.sudoers to /etc/sudoers.d/debumblebee. This
    is required to enable on demand support. Also you need to make sure that sudo
