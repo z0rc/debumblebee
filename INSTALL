@@ -1,10 +1,10 @@
 AUTOMATIC INSTALLATION
 
-With Debian you may run install.sh under root user to get everything working.
-This script is completely tested and working on 64 bit Sid. If you are running
-Testing, Stable or different architecture and debumblebee isn't working, then
-please check Manual Installation section. Unfortunately, I can provide limited
-support for them.
+With Debian or LinuxMint based on Debian you may run install.sh under root user
+to get everything working. This script is completely tested and working on 64
+bit Sid. If you are running Testing, Stable or different architecture and
+debumblebee isn't working, then please check Manual Installation section.
+Unfortunately, I can provide limited support for them.
 
 
 MANUAL INSTALLATION

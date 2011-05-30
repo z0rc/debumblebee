@@ -29,9 +29,9 @@ debumblebee is combination of additional X server for nVidia graphics card and
 VirtualGL package which allows to access nVidia X server screen from Intel X
 server screen with full OpenGL support.
 
-Right now this script supports only Debian because I'm running it. Feel free to
-add support of any other distro. I'll gladly accept your changes. If you have
-any questions about adding support please check INSTALL file for detailed
+Right now this script supports only Debian and LinuxMint based on Debian. Feel
+free to add support of any other distro. I'll gladly accept your changes. If you
+have any questions about adding support please check INSTALL file for detailed
 instructions of what should be done by installation script.
 
 
@@ -50,7 +50,8 @@ Right now VDPAU video playback isn't supported.
 
 TODO
 
-* Add power save support by disabling nVidia card via acpi when it isn't used.
+* Improve power save support. Add list of working acpi_call laptop models with
+  confirmed working command strings.
 * Rewrite optirun with perl, so it can use SGID bit which allows to apply more
   strict security permissions and get rid of sudoers file.
 

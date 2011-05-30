@@ -18,10 +18,11 @@
 
 ARCH=`uname -m`
 
-if [ `lsb_release -i -s` = Debian ]; then
+if [ `lsb_release -i -s` = Debian -o `lsb_release -c -s` = debian ]; then
 	DISTRO=DEBIAN
 else
-	echo "Sorry, your Linux distribuition isn't supported. Right now this script works only with Debian." 1>&2
+	echo "Sorry, your Linux distribuition isn't supported. Right now this script works only with" 1>&2
+	echo "Debian and LinuxMint based on Debian." 1>&2
 	echo "Please check INSTALL file for manual installation instructions." 1>&2
 	exit 1
 fi
