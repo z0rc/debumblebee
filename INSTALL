@@ -34,7 +34,7 @@ MANUAL INSTALLATION
      create a /usr/local/lib/debumblebee folder, symlink nVidia libglx.so there
      and launch X server with the following option:
      "-modulepath /usr/local/lib/debumblebee,/usr/lib/xorg/modules";
-   - X server should use second screen ":1 vt9";
+   - X server should use second screen ":1 vt8";
    - X server should use custom xorg configuration for nVidia card:
      "-config /etc/X11/xorg.conf.nvidia";
    - in xorg.conf.nvidia replace:
@@ -83,10 +83,10 @@ command strings to acpi subsystem.
 Second is to prepare enablecard and disablecard shell scripts. You can find
 samples in install-files/contrib/power_off_on folder. Copy them to
 /usr/local/bin folder. You MUST change command strings passed in those scripts
-depending on your laptop. How do you find them? There is several ways. First
+depending on your laptop. How do you find them? There are several ways. First
 check the http://hybrid-graphics-linux.tuxfamily.org/index.php?title=ACPI_calls
 link. Then you can check original bumblebee repo, it already has a bunch of
-confirmied scripts. Also you may use test_off.sh script from acpi_call.
+confirmed scripts. Also you may use test_off.sh script from acpi_call.
 
 After preparation is completed you may enable POWER_SAVE option.
 
