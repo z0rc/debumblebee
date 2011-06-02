@@ -5,7 +5,7 @@ ARCH=`uname -m`
 echo "Installing required packages."
 
 apt-get update
-apt-get -y install nvidia-kernel-dkms nvidia-xconfig sudo
+apt-get -y install nvidia-kernel-dkms nvidia-xconfig sudo dmidecode
 if [ $? -ne 0 ]; then
 	echo "Package manager failed to install nvidia packages." 1>&2
 	echo "Please check that you have non-free repository enabled." 1>&2
@@ -58,6 +58,15 @@ modprobe nvidia
 
 NVIDIABUSID=`nvidia-xconfig --query-gpu-info | grep BusID | awk '{print $4}'`
 sed -i 's/REPLACEWITHBUSID/'$NVIDIABUSID'/g' /etc/X11/xorg.conf.nvidia
+
+MODEL=`dmidecode --string system-product-name`
+MONITOR=`./monitor.sh $MODEL`
+
+if [ $MONITOR != NONE ]; then
+	sed -i 's/REPLACEWITHCONNECTEDMONITOR/'$MONITOR'/g' /etc/X11/xorg.conf.nvidia
+else
+	sed -i '/.*ConnectedMonitor.*/d' /etc/X11/xorg.conf.nvidia
+fi
 
 echo
 echo "Enabling debumblebee service."

@@ -23,7 +23,7 @@ rm -rf /usr/local/lib/debumblebee
 echo
 echo "Removing packages."
 
-apt-get -y purge nvidia-kernel-dkms libgl1-nvidia-alternatives libglx-nvidia-alternatives libgl1-nvidia-glx libvdpau1 nvidia-kernel-common nvidia-installer-cleanup nvidia-support nvidia-vdpau-driver nvidia-xconfig virtualgl
+apt-get -y purge nvidia-kernel-dkms libgl1-nvidia-alternatives libglx-nvidia-alternatives libgl1-nvidia-glx libvdpau1 nvidia-kernel-common nvidia-installer-cleanup nvidia-support nvidia-vdpau-driver nvidia-xconfig virtualgl dmidecode
 if [ $? -ne 0 ]; then
 	echo "Failed to remove packages." 1>&2
 	exit 1
