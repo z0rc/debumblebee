@@ -17,7 +17,7 @@ MANUAL INSTALLATION
      wine), install additional 32 bit nVidia libraries (on Debian it can be
      archived via "apt-get install libgl1-nvidia-glx-ia32");
 2) You need to alter libGL.so library, libglx.so Xorg module and any other
-   libraries replaced by nVidia back to free version, but keep nVidia version
+   libraries replaced by nVidia back to free versions, but keep nVidia versions
    somewhere (usually they are placed in /usr/lib/nvidia*). In Debian based
    distros it should be done via alternatives mechanism, please check
    update-alternatives manual page and /etc/alternatives folder.
@@ -26,7 +26,7 @@ MANUAL INSTALLATION
    You may check install-files/debian/debumblebee init script and
    install-files/debian/xorg.conf.nvidia for configuration. The main points are:
    - init script should start after any nvidia initializations (nvidia-kernel
-     on Debian) and after kdm/gdm;
+     init script on Debian) and after kdm/gdm;
    - nVidia X server should use nVidia's libraries libGL.so and libglx.so. The
      libGL.so library could be loaded via LD_LIBRARY_PATH and the Xorg module
      should be loaded via X command line option -modulepath (at least it should
@@ -37,10 +37,13 @@ MANUAL INSTALLATION
    - X server should use second screen ":1 vt8";
    - X server should use custom xorg configuration for nVidia card:
      "-config /etc/X11/xorg.conf.nvidia";
-   - in xorg.conf.nvidia replace:
-     - BusID with nVidia card PCI ID. You can obtain it from lspci or
+   - in xorg.conf.nvidia:
+     - replace BusID with nVidia card PCI ID. You can obtain it from lspci or
        "nvidia-xconfig --query-gpu-info" output, in xorg.conf.nvidia it should
        be something like "PCI:1:0:0";
+     - you may need to add proper ConnectedMonitor option into Device section if
+       the nVidia module fails to autodetect it. The option should be DFP-0 or
+       CRT-0. Usually autodetection fails with DFP-0, so try it first.
 6) Copy install-files/debian/debumblebee.default to /etc/default/debumblebee,
    install-files/debian/debumblebee.sudoers to /etc/sudoers.d/debumblebee. This
    is required to enable on demand support. Also you need to make sure that sudo
@@ -53,13 +56,13 @@ MANUAL INSTALLATION
    confirmation.
 
 
-CONFIGURING
+CONFIGURATION
 
 Configuration file is /etc/default/debumblebee.
 
 By default we are using method proxy from vglrun for OpenGL transfer. You can
 switch to another method, if this one unsatisfies you. Please check the output
-of "vglrun -h".
+of "vglrun -h". Also note that some methods require vglclient to be running.
 
 By default debumblebee configured to start only on demand invoked from optirun
 script. You can change this behavior in configuration file.
@@ -74,7 +77,7 @@ option you need to do two things.
 
 First is to build and install acpi_call module, you can find it in
 install-files/contrib/acpi_call folder. Installation script requires root rights
-and dkms (it was installed with nVidia modules). This module is used for passing
+and dkms (it was installed with nVidia module). This module is used for passing
 command strings to acpi subsystem.
 
 Second is to prepare enablecard and disablecard shell scripts. You can find
@@ -82,7 +85,7 @@ samples in install-files/contrib/power_off_on folder. Copy them to
 /usr/local/bin folder. You MUST change command strings passed in those scripts
 depending on your laptop. How do you find them? There are several ways. First
 check the http://hybrid-graphics-linux.tuxfamily.org/index.php?title=ACPI_calls
-link. Then you can check original bumblebee repo, it already has a bunch of
+page. Then you can check original bumblebee repo, it already has a bunch of
 confirmed scripts. Also you may use test_off.sh script from acpi_call.
 
 After preparation is completed you may enable POWER_SAVE option.
