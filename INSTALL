@@ -18,7 +18,7 @@ MANUAL INSTALLATION
      archived via "apt-get install libgl1-nvidia-glx-ia32");
 2) You need to alter libGL.so library, libglx.so Xorg module and any other
    libraries replaced by nVidia back to free versions, but keep nVidia versions
-   somewhere (usually they are placed in /usr/lib/nvidia*). In Debian based
+   somewhere (usually they are placed in /usr/lib/nvidia). In Debian based
    distros it should be done via alternatives mechanism, please check
    update-alternatives manual page and /etc/alternatives folder.
 3) Install the VirtualGL package from http://www.virtualgl.org/.
