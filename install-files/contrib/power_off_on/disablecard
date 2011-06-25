@@ -21,9 +21,9 @@ acpi_call () {
 	result=$(cat /proc/acpi/call)
 	case "$result" in
 		failed*) echo "Disabling nVidia card failed."  ;;
-		*) echo "Disabling nVidia card succeded." ;;
+		ok*) echo "Disabling nVidia card succeded." ;;
 	esac
 }
 
 # Replace this command string depending on your laptop model.
-echo $(acpi_call "\_SB_.PCI0.PEGR.GFX0._OFF")
+echo $(acpi_call "\_SB_.PCI0.PEGR.GFX0._PS3")

@@ -14,11 +14,11 @@ acpi_call () {
 	result=$(cat /proc/acpi/call)
 	case "$result" in
 		failed*) echo "Enabling nVidia card failed." ;;
-		*) echo "Enabling nVidia card succeded." ;;
+		ok*) echo "Enabling nVidia card succeded." ;;
 	esac
 }
 
 # Replace this command string depending on your laptop model.
-echo $(acpi_call "\_SB_.PCI0.PEGR.GFX0._ON")
+echo $(acpi_call "\_SB_.PCI0.PEGR.GFX0._PS0")
 
 modprobe nvidia
