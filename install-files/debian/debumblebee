@@ -87,6 +87,7 @@ case $1 in
   demandoff)
 	do_stop
 	if [ "$POWER_SAVE" = "yes" -a -x "$DISABLECARD" ]; then
+		sleep 2
 		$DISABLECARD
 	fi
 	;;
