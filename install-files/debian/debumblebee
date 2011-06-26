@@ -66,12 +66,18 @@ case $1 in
 	esac
 	;;
   stop)
-	log_daemon_msg "Stopping $DESC" "$NAME"
-	do_stop
-	case $? in
-		0) log_end_msg 0 ;;
-		2) log_action_end_msg 0 "already stopped" ;;
-	esac
+	if [ "$ON_DEMAND" = "yes" -a "$POWER_SAVE" = "yes" -a -x "$ENABLECARD" ]; then
+		log_daemon_msg "Enabling nVidia card before shutdown" "$NAME"
+		log_end_msg 0
+		$ENABLECARD
+	else
+		log_daemon_msg "Stopping $DESC" "$NAME"
+		do_stop
+		case $? in
+			0) log_end_msg 0 ;;
+			2) log_action_end_msg 0 "already stopped" ;;
+		esac
+	fi
 	;;
   demandon)
 	if [ "$POWER_SAVE" = "yes" -a -x "$ENABLECARD" ]; then
@@ -81,7 +87,6 @@ case $1 in
   demandoff)
 	do_stop
 	if [ "$POWER_SAVE" = "yes" -a -x "$DISABLECARD" ]; then
-		sleep 2
 		$DISABLECARD
 	fi
 	;;
