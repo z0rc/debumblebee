@@ -2,23 +2,32 @@
 
 # This script should contain the command(s) nessesary to switch on the nVidia card.
 
-modprobe acpi_call
-
-if ! lsmod | grep -q acpi_call; then
-	echo "Error: acpi_call module not loaded."
-	exit
-fi
-
 acpi_call () {
 	echo "$*" > /proc/acpi/call
 	result=$(cat /proc/acpi/call)
 	case "$result" in
-		failed*) echo "Enabling nVidia card failed." ;;
-		ok*) echo "Enabling nVidia card succeded." ;;
+		failed) echo "acpi_call $* failed." ;;
+		ok) echo "acpi_call $* succeded." ;;
 	esac
 }
 
-# Replace this command string depending on your laptop model.
-echo $(acpi_call "\_SB_.PCI0.PEGR.GFX0._PS0")
+modprobe acpi_call
+
+if ! lsmod | grep -q acpi_call; then
+	echo "Error: acpi_call module not loaded." 1>&2
+	exit 1
+fi
+
+# Replace these command strings depending on your laptop model.
+acpi_call "\_SB.PCI0.PEGR.GFX0.DON"
+acpi_call "\_SB.PCI0.LPCB.EC0.TSES"
 
 modprobe nvidia
+
+if lsmod | grep -q nvidia; then
+	echo "Enabling nVidia card succeded."
+	exit 0
+else
+	echo "Enabling nVidia card failed."
+	exit 1
+fi
