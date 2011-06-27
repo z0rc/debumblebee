@@ -5,13 +5,14 @@ if [ -r /etc/default/debumblebee ]; then
 else
 	VGL_DISPLAY=:1
 	VGL_COMPRESS=proxy
+	PIDFILE=/tmp/optirun.pid
 fi
 
 if [ "$ON_DEMAND" = "yes" ]; then
 	if [ -e $PIDFILE ]; then
 		cat $PIDFILE | while read pid; do
 			if [ -n $pid ]; then
-				if ! ps -p $pid | grep optirun; then
+				if ! ps -p $pid | grep -q optirun; then
 					sed -i '/'$pid'/d' $PIDFILE
 				fi
 			fi

@@ -7,8 +7,8 @@ ON_DEMAND=yes
 # Disabled by default.
 POWER_SAVE=no
 
-# X transport method used for transfer rendered data from nVidia to Intel card.
-# Check output of "vglrun -h" for other variants.
+# VirtualGL transport method used for transfer rendered data from nVidia to
+# Intel card. Check the output of "vglrun -h" for other variants.
 VGL_COMPRESS=proxy
 
 # Display used by nVidia X server.
