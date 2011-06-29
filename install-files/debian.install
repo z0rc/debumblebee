@@ -45,16 +45,52 @@ cp debian/optirun.bash /etc/bash_completion.d/optirun
 if [ $ARCH = x86_64 ]; then
 	cp debian/optirun32 /usr/local/bin
 fi
+mkdir /usr/local/lib/debumblebee
+ln -s /usr/lib/nvidia/libglx.so /usr/local/lib/debumblebee/libglx.so
 
-update-alternatives --set libGL.so /usr/lib/nvidia/diversions/libGL.so
-update-alternatives --set libGL.so.1 /usr/lib/nvidia/diversions/libGL.so.1
-update-alternatives --set libglx.so /usr/lib/nvidia/diversions/libglx.so
+#Stolen from glx-alternative-(nvidia|mesa) packages
+TRIPLETS="/ /i386-linux-gnu/ /x86_64-linux-gnu/"
+
+add_slave()
+{
+	local target_link name source_path triplet
+	target_link="$1"
+	name="$2"
+	source_path="$3"
+	if [ -f "${source_path}" ]; then
+		echo --slave "${target_link}" "glx--${name}" "${source_path}"
+	fi
+}
+
+add_multiarch_slave()
+{
+	local target_dir file source_dir source_sub_dir triplet
+	target_dir="$1"
+	file="$2"
+	source_dir="$3"
+	source_sub_dir="$4"
+	for triplet in $TRIPLETS ; do
+		add_slave \
+			"${target_dir}${triplet}${file}" \
+			"${file}$(echo ${triplet} | sed -e 's/\/$//; s/^\//-/')" \
+			"${source_dir}${triplet}${source_sub_dir}${file}"
+	done
+}
+
+slaves="
+	$(add_multiarch_slave /usr/lib libGL.so.1 /usr/lib/mesa-diverted)
+	$(add_multiarch_slave /usr/lib libnvidia-cfg.so.1 /usr/lib nvidia/)
+	$(add_multiarch_slave /usr/lib libXvMCNVIDIA.so.1 /usr/lib nvidia/)
+	$(add_multiarch_slave /usr/lib libXvMCNVIDIA_dynamic.so.1 /usr/lib nvidia/)
+	$(add_slave /usr/bin/nvidia-bug-report.sh nvidia-bug-report.sh /usr/lib/nvidia/nvidia-bug-report.sh)
+	$(add_slave /usr/lib/xorg/modules/extensions/libglx.so libglx.so /usr/lib/mesa-diverted/libglx.so)
+	$(add_slave /usr/lib/xorg/modules/drivers/nvidia_drv.so nvidia_drv.so /usr/lib/nvidia/nvidia_drv.so)
+       "
+update-alternatives --install /usr/lib/glx glx /usr/local/lib/debumblebee 200 $slaves
+
 if [ $ARCH = x86_64 ]; then
 	update-alternatives --set ia32-libGL.so.1 /usr/lib32/nvidia/diversions/libGL.so.1
 fi
-mkdir /usr/local/lib/debumblebee
-ln -s /usr/lib/nvidia/libglx.so /usr/local/lib/debumblebee/libglx.so
-modprobe nvidia
 
 NVIDIABUSID=PCI:`lspci -mm | egrep '(VGA|3D)*nVidia' | cut -f1 -d' ' | tr . : | sed 's/0\([0-9a-f]:\)/\1/g'`
 sed -i 's/REPLACEWITHBUSID/'$NVIDIABUSID'/g' /etc/X11/xorg.conf.nvidia
@@ -72,5 +108,6 @@ echo
 echo "Enabling debumblebee service."
 
 update-rc.d debumblebee defaults
+modprobe nvidia
 
 exit 0

@@ -24,7 +24,7 @@ if [ "$ON_DEMAND" = "yes" ]; then
 	echo $$ >> $PIDFILE
 fi
 
-vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld /usr/lib/nvidia "$@"
+vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld /usr/lib/`uname -m`-linux-gnu/nvidia "$@"
 
 if [ "$ON_DEMAND" = "yes" ]; then
 	sed -i '/'$$'/d' $PIDFILE

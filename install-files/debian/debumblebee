@@ -19,7 +19,7 @@ if [ -r /etc/default/debumblebee ]; then
 fi
 
 PATH=/sbin:/usr/local/sbin:/usr/sbin:/bin:/usr/local/bin:/usr/bin
-LD_LIBRARY_PATH=/usr/lib/nvidia
+LD_LIBRARY_PATH=/usr/lib/`uname -m`-linux-gnu/nvidia
 DESC="Optimus X server"
 NAME=debumblebee
 DAEMON=/usr/bin/X

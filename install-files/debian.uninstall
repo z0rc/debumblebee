@@ -10,7 +10,7 @@ rmmod nvidia
 echo
 echo "Removing custom debumblebee files."
 
-update-rc.d debumblebee remove
+update-alternatives --remove glx /usr/local/lib/debumblebee
 
 rm -f /etc/init.d/debumblebee
 rm -f /etc/default/debumblebee
@@ -20,10 +20,12 @@ rm -f /etc/X11/xorg.conf.nvidia
 rm -f /usr/local/bin/optirun*
 rm -rf /usr/local/lib/debumblebee
 
+update-rc.d debumblebee remove
+
 echo
 echo "Removing packages."
 
-apt-get -y purge nvidia-kernel-dkms libgl1-nvidia-alternatives libglx-nvidia-alternatives libgl1-nvidia-glx libvdpau1 nvidia-kernel-common nvidia-installer-cleanup nvidia-support nvidia-vdpau-driver virtualgl dmidecode
+apt-get -y purge nvidia-kernel-dkms nvidia-alternative nvidia-vdpau-driver glx-alternative-nvidia glx-alternative-mesa glx-diversions nvidia-kernel-common xserver-xorg-video-nvidia nvidia-installer-cleanup libgl1-nvidia-glx nvidia-support virtualgl dmidecode
 if [ $? -ne 0 ]; then
 	echo "Failed to remove packages." 1>&2
 	exit 1
