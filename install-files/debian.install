@@ -4,6 +4,8 @@ ARCH=`uname -m`
 
 echo "Installing required packages."
 
+# Here we are installing standard nVidia package, which provides everything we need to make nVidia card running.
+# sudo is needed for ON_DEMAND option, dmidecore is required for autodetecting ConnectedMonitor option on some laptops.
 apt-get update
 apt-get -y install nvidia-kernel-dkms sudo dmidecode
 if [ $? -ne 0 ]; then
@@ -12,6 +14,7 @@ if [ $? -ne 0 ]; then
 	exit 2
 fi
 if [ $ARCH = x86_64 ]; then
+# I'd like to run wine with optirun, so this package is also required.
 	apt-get -y install libgl1-nvidia-glx-ia32
 	wget -P /tmp http://virtualgl.sourceforge.net/nightly.22/VirtualGL_amd64.deb
 	if [ $? -ne 0 ]; then
@@ -48,7 +51,7 @@ fi
 mkdir /usr/local/lib/debumblebee
 ln -s /usr/lib/nvidia/libglx.so /usr/local/lib/debumblebee/libglx.so
 
-#Stolen from glx-alternative-(nvidia|mesa) packages
+# Stolen from postinstall scripts from glx-alternative-(nvidia|mesa) packages.
 TRIPLETS="/ /i386-linux-gnu/ /x86_64-linux-gnu/"
 
 add_slave()
@@ -86,15 +89,21 @@ slaves="
 	$(add_slave /usr/lib/xorg/modules/extensions/libglx.so libglx.so /usr/lib/mesa-diverted/libglx.so)
 	$(add_slave /usr/lib/xorg/modules/drivers/nvidia_drv.so nvidia_drv.so /usr/lib/nvidia/nvidia_drv.so)
        "
+
+# Here we are adding new high priority alternative for glx, it should be chosen automatically.
+# It uses libGL and libglx from mesa and everyting else from nvidia, so the mesa acceleration works
+# and the nvidia X server is able to start (we are loading nvidia libGL and libglx for it in init and optirun scripts).
 update-alternatives --install /usr/lib/glx glx /usr/local/lib/debumblebee 200 $slaves
 
 if [ $ARCH = x86_64 ]; then
 	update-alternatives --set ia32-libGL.so.1 /usr/lib32/nvidia/diversions/libGL.so.1
 fi
 
+# (Auto)detection of nvidia BusID for xorg.
 NVIDIABUSID=PCI:`lspci -mm | egrep '(VGA|3D)*nVidia' | cut -f1 -d' ' | tr . : | sed 's/0\([0-9a-f]:\)/\1/g'`
 sed -i 's/REPLACEWITHBUSID/'$NVIDIABUSID'/g' /etc/X11/xorg.conf.nvidia
 
+# On some laptops nvidia X server doesn't work without ConnectedMonitor option, here is workaround for them.
 MODEL=`dmidecode --string system-product-name`
 MONITOR=`./monitor.sh $MODEL`
 

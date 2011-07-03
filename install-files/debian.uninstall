@@ -10,6 +10,8 @@ rmmod nvidia
 echo
 echo "Removing custom debumblebee files."
 
+# After removing this alternative the one from nvidia will be chosen automatically.
+# Still glx alternative set will be removed with purging glx-alrenative-(nvidia|mesa) packages a bit later.
 update-alternatives --remove glx /usr/local/lib/debumblebee
 
 rm -f /etc/init.d/debumblebee

@@ -34,6 +34,7 @@ fi
 final=1
 
 # Replace these command strings depending on your laptop model.
+# These work only for ASUS K53SJ.
 acpi_call "\_SB.PCI0.LPCB.EC0.TSDS"
 acpi_call "\_SB.PCI0.PEGR.GFX0.DOFF"
 
