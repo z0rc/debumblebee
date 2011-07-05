@@ -9,7 +9,7 @@ POWER_SAVE=no
 
 # VirtualGL transport method used for transfer rendered data from nVidia to
 # Intel card. Check the output of "vglrun -h" for other variants.
-VGL_COMPRESS=proxy
+VGL_COMPRESS=xv
 
 # Display used by nVidia X server.
 VGL_DISPLAY=:1
