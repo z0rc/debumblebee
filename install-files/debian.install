@@ -5,7 +5,7 @@ ARCH=`uname -m`
 echo "Installing required packages."
 
 # Here we are installing standard nVidia package, which provides everything we need to make nVidia card running.
-# sudo is needed for ON_DEMAND option, dmidecore is required for autodetecting ConnectedMonitor option on some laptops.
+# sudo is needed for ON_DEMAND option, dmidecode is required for autodetecting ConnectedMonitor option on some laptops.
 apt-get update
 apt-get -y install nvidia-kernel-dkms sudo dmidecode
 if [ $? -ne 0 ]; then
