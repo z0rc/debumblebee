@@ -100,7 +100,7 @@ if [ $ARCH = x86_64 ]; then
 fi
 
 # (Auto)detection of nvidia BusID for xorg.
-NVIDIABUSID=PCI:`lspci -mm | egrep '(VGA|3D)*nVidia' | cut -f1 -d' ' | tr . : | sed 's/0\([0-9a-f]:\)/\1/g'`
+NVIDIABUSID=PCI:`lspci -mm | egrep 'VGA.*nVidia|3D.*nVidia' | cut -f1 -d' ' | tr . : | sed 's/0\([0-9a-f]:\)/\1/g'`
 sed -i 's/REPLACEWITHBUSID/'$NVIDIABUSID'/g' /etc/X11/xorg.conf.nvidia
 
 # On some laptops nvidia X server doesn't work without ConnectedMonitor option, here is workaround for them.
