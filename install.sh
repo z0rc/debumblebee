@@ -51,11 +51,10 @@ fi
 
 echo
 echo "Installation completed."
+echo "Now you should be able to start applications with \"optirun <application>\"."
 if [ $ARCH = x86_64 ]; then
-	echo "Now you should be able to start applications with \"optirun <application>\" or \"optirun32 <application>\"."
-	echo "optirun32 can be used for legacy 32 bit applications and wine games. Everything else should work with optirun."
-else
-	echo "Now you should be able to start applications with \"optirun <application>\"."
+	echo "To start 32 bit application, for example \"wine\", you need to use -32 commandline option, e.g:"
+	echo "\"optirun -32 wine <application>\""
 fi
 echo "You may check the output of \"optirun glxgears -info\" for confirmation that installation was successfull."
 echo

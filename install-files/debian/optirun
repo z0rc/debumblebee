@@ -29,7 +29,12 @@ if [ "$DISABLE_SCREENSAVER" = "yes" ]; then
 	trap "kill $!" INT TERM EXIT
 fi
 
-vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld /usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia "$@"
+if [ $1 = "-32" ]; then
+	shift
+	vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld /usr/lib32/nvidia "$@"
+else
+	vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld /usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia "$@"
+fi
 
 if [ "$ON_DEMAND" = "yes" ]; then
 	sed -i '/'$$'/d' $PIDFILE
