@@ -67,6 +67,11 @@ of "vglrun -h". Also note that some methods require vglclient to be running.
 By default debumblebee configured to start only on demand invoked from optirun
 script. You can change this behavior in configuration file.
 
+Disable screensaver option is off by default. To make it work correctly you
+need to set HEARTBEAT_CMD option depending on your DE. I've provided several
+variants (tested only with KDE right now), but it's up to you to find which is
+working with your DE.
+
 
 POWER SAVE OPTION
 

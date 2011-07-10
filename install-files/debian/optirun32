@@ -24,6 +24,11 @@ if [ "$ON_DEMAND" = "yes" ]; then
 	echo $$ >> $PIDFILE
 fi
 
+if [ "$DISABLE_SCREENSAVER" = "yes" ]; then
+	sh -c "while : ; do $HEARTBEAT_CMD ; sleep 30; done" &
+	trap "kill $!" INT TERM EXIT
+fi
+
 vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld /usr/lib32/nvidia "$@"
 
 if [ "$ON_DEMAND" = "yes" ]; then

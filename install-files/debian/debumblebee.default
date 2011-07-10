@@ -7,6 +7,18 @@ ON_DEMAND=yes
 # Disabled by default.
 POWER_SAVE=no
 
+# Try to disable screensaver when the optirun is running.
+# Off by default.
+DISABLE_SCREENSAVER=no
+
+# Heartbeat command used with DISABLE_SCREENSAVER option to prevent
+# screensaver launch. By default it's set to work with KDE. With Gnome you may
+# try the following command:
+# "dbus-send --type=method_call --dest=org.gnome.ScreenSaver /ScreenSaver SimulateUserActivity > /dev/null"
+# If you are using xscreensaver, than try:
+# "xscreensaver-command -deactivate >&- 2>&- &"
+HEARTBEAT_CMD="qdbus org.freedesktop.ScreenSaver /ScreenSaver SimulateUserActivity > /dev/null"
+
 # VirtualGL transport method used for transfer rendered data from nVidia to
 # Intel card. Check the output of "vglrun -h" for other variants.
 VGL_COMPRESS=xv
