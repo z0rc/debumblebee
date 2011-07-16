@@ -16,7 +16,7 @@ MANUAL INSTALLATION
    - If you are running 64 bit arch and want to use 32 bit apps (mostly through
      wine), install additional 32 bit nVidia libraries (on Debian it can be
      archived via "apt-get install libgl1-nvidia-glx-ia32");
-2) You need to alter libGL.so library, libglx.so Xorg module and any other
+2) You need to alter libGL.so.1 library, libglx.so Xorg module and any other
    libraries replaced by nVidia back to free versions, but keep nVidia versions
    somewhere (usually they are placed in /usr/lib/nvidia). In Debian based
    distros it should be done via alternatives mechanism, please check
@@ -27,8 +27,8 @@ MANUAL INSTALLATION
    install-files/debian/xorg.conf.nvidia for configuration. The main points are:
    - init script should start after any nvidia initializations (nvidia-kernel
      init script on Debian) and after kdm/gdm;
-   - nVidia X server should use nVidia's libraries libGL.so and libglx.so. The
-     libGL.so library could be loaded via LD_LIBRARY_PATH and the Xorg module
+   - nVidia X server should use nVidia's libraries libGL.so.1 and libglx.so. The
+     libGL.so.1 library could be loaded via LD_LIBRARY_PATH and the Xorg module
      should be loaded via X command line option -modulepath (at least it should
      be loaded BEFORE the free libglx.so module). To archive this in Debian
      create a /usr/local/lib/debumblebee folder, symlink nVidia libglx.so there
@@ -48,9 +48,8 @@ MANUAL INSTALLATION
    install-files/debian/debumblebee.sudoers to /etc/sudoers.d/debumblebee. This
    is required to enable on demand support. Also you need to make sure that sudo
    package is installed.
-7) Copy optirun and optirun32 (only for 64 bit arch, if you want to use 32 bit
-   applications) files from install-files/debian folder somewhere into your
-   system wide PATH, /usr/local/bin is recommended place.
+7) Copy optirun from install-files/debian folder somewhere into your system wide
+   PATH, /usr/local/bin is recommended place.
 8) If you followed this instruction closely, everything should be working. You
    may check outputs of "glxgears -info" and "optirun glxgears -info" for
    confirmation.
@@ -60,9 +59,9 @@ CONFIGURATION
 
 Configuration file is /etc/default/debumblebee.
 
-By default we are using method proxy from vglrun for OpenGL transfer. You can
-switch to another method, if this one unsatisfies you. Please check the output
-of "vglrun -h". Also note that some methods require vglclient to be running.
+By default we are using method xv from vglrun for OpenGL transfer. You can switch
+to another method, if this one unsatisfies you. Please check the output of
+"vglrun -h". Also note that some methods require vglclient to be running.
 
 By default debumblebee configured to start only on demand invoked from optirun
 script. You can change this behavior in configuration file.
