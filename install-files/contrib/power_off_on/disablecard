@@ -38,9 +38,9 @@ fi
 final=1
 
 # Replace these command strings depending on your laptop model.
-# These work only for ASUS K53SJ.
-acpi_call "\_SB.PCI0.LPCB.EC0.TSDS"
-acpi_call "\_SB.PCI0.PEGR.GFX0.DOFF"
+# These ones work only for ASUS K53SJ.
+acpi_call "\_SB.PCI0.GFX0._DSM {0xF8,0xD8,0x86,0xA4,0xDA,0x0B,0x1B,0x47,0xA7,0x2B,0x60,0x42,0xA6,0xB5,0xBE,0xE0} 0x100 0x1A {0x1,0x0,0x0,0x3}"
+acpi_call "\_SB.PCI0.PEGR.GFX0._PS3"
 
 if [ $final = 1 ]; then
 	echo "Disabling nVidia card succeded."

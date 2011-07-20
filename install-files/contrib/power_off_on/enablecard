@@ -19,10 +19,9 @@ if ! lsmod | grep -q acpi_call; then
 	exit 1
 fi
 
-# Replace these command strings depending on your laptop model.
-# These work only for ASUS K53SJ.
-acpi_call "\_SB.PCI0.PEGR.GFX0.DON"
-acpi_call "\_SB.PCI0.LPCB.EC0.TSES"
+# Replace this command string depending on your laptop model.
+# This one works only for ASUS K53SJ.
+acpi_call "\_SB.PCI0.PEGR.GFX0._PS0"
 
 modprobe nvidia
 
