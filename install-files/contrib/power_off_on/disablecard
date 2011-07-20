@@ -14,6 +14,10 @@ acpi_call () {
 		echo "acpi_call $* succeded."
 		final=$(( $final & 1 ))
 		;;
+	    *)
+		echo "acpi_call $* returned $result."
+		final=$(( $final & 1 ))
+		;;
 	esac
 }
 

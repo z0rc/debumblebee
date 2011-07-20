@@ -8,6 +8,7 @@ acpi_call () {
 	case "$result" in
 		failed) echo "acpi_call $* failed." ;;
 		ok) echo "acpi_call $* succeded." ;;
+		*) echo "acpi_call $* returned $result." ;;
 	esac
 }
 
