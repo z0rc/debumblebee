@@ -16,6 +16,8 @@
 
 if [ -r /etc/default/debumblebee ]; then
 	. /etc/default/debumblebee
+else
+	VGL_DISPLAY=:8
 fi
 
 PATH=/sbin:/usr/local/sbin:/usr/sbin:/bin:/usr/local/bin:/usr/bin
@@ -23,7 +25,7 @@ LD_LIBRARY_PATH=/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia
 DESC="Optimus X server"
 NAME=debumblebee
 DAEMON=/usr/bin/X
-DAEMON_ARGS="-ac -config /etc/X11/xorg.conf.nvidia -sharevts -modulepath /usr/local/lib/debumblebee,/usr/lib/xorg/modules -nolisten tcp -noreset :1 vt8"
+DAEMON_ARGS="-config /etc/X11/xorg.conf.nvidia -modulepath /usr/local/lib/debumblebee,/usr/lib/xorg/modules -sharevts $VGL_DISPLAY"
 PIDFILE=/tmp/.X1-lock
 SCRIPTNAME=/etc/init.d/$NAME
 

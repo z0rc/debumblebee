@@ -24,7 +24,7 @@ HEARTBEAT_CMD="qdbus org.freedesktop.ScreenSaver /ScreenSaver SimulateUserActivi
 VGL_COMPRESS=xv
 
 # Display used by nVidia X server.
-VGL_DISPLAY=:1
+VGL_DISPLAY=:8
 
 # Pidfile used by optirun script.
 PIDFILE=/tmp/optirun.pid
