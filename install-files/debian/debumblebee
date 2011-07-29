@@ -26,7 +26,7 @@ DESC="Optimus X server"
 NAME=debumblebee
 DAEMON=/usr/bin/X
 DAEMON_ARGS="-config /etc/X11/xorg.conf.nvidia -modulepath /usr/local/lib/debumblebee,/usr/lib/xorg/modules -sharevts $VGL_DISPLAY"
-PIDFILE=/tmp/.X1-lock
+PIDFILE=/tmp/.X${VGL_DISPLAY#?}-lock
 SCRIPTNAME=/etc/init.d/$NAME
 
 . /lib/lsb/init-functions

@@ -3,7 +3,7 @@
 if [ -r /etc/default/debumblebee ]; then
 	. /etc/default/debumblebee
 else
-	VGL_DISPLAY=:1
+	VGL_DISPLAY=:8
 	VGL_COMPRESS=xv
 	PIDFILE=/tmp/optirun.pid
 fi
