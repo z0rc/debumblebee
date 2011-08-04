@@ -1,0 +1,3 @@
+[submodule "install-files/contrib/acpi_call/src"]
+	path = install-files/contrib/acpi_call/src
+	url = https://github.com/mkottman/acpi_call.git
