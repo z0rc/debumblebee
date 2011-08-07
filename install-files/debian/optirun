@@ -8,7 +8,16 @@ else
 	PIDFILE=/tmp/optirun.pid
 fi
 
+if [ $1 = "-h" -o $1 = "--help" ]; then
+	echo "Usage: optirun [-32] <application> [application arguments]\n"
+	echo " -32 : Launch 32 bit application on 64 bit arch."
+	echo "       Without this option application is launched under current arch. (`uname -m`)\n"
+	exit 0
+fi
+
 if [ "$ON_DEMAND" = "yes" ]; then
+# Checking pids from pidfile.
+# If pid doesn't belong to other optirun instance then remove it from file.
 	if [ -e $PIDFILE ]; then
 		cat $PIDFILE | while read pid; do
 			if [ -n $pid ]; then
@@ -18,17 +27,22 @@ if [ "$ON_DEMAND" = "yes" ]; then
 			fi
 		done
 	fi
+# If pidfile is empty or missing, then there is no other optirun instances running.
+# So we need to start X server for nVidia card.
 	if [ ! -s $PIDFILE ]; then
 		sudo /etc/init.d/debumblebee demandon
 	fi
+# Adding current pid to pidfile.
 	echo $$ >> $PIDFILE
 fi
 
+# Execute heardbeat command every 30 seconds to prevent screensaver launch.
 if [ "$DISABLE_SCREENSAVER" = "yes" ]; then
 	sh -c "while : ; do $HEARTBEAT_CMD ; sleep 30; done" &
 	trap "kill $!" INT TERM EXIT
 fi
 
+# Launch selected application through VirtualGL using 32 or 64 bit shared libs.
 if [ $1 = "-32" ]; then
 	shift
 	vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld /usr/lib32/nvidia "$@"
@@ -36,10 +50,15 @@ else
 	vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld /usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia "$@"
 fi
 
+# Removing current pid from pidfile
 if [ "$ON_DEMAND" = "yes" ]; then
 	sed -i '/'$$'/d' $PIDFILE
+# If pidfile is empty, then there is no other optirun instances running.
+# So we need to stop X server for nVidia card.
 	if [ ! -s $PIDFILE ]; then
 		rm -f $PIDFILE
 		sudo /etc/init.d/debumblebee demandoff
 	fi
 fi
+
+exit 0
