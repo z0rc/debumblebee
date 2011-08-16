@@ -51,7 +51,7 @@ fi
 
 echo
 echo "Installation completed."
-echo "Now you should be able to start applications with \"optirun <application>\"."
+echo "After restart you should be able to start applications with \"optirun <application>\"."
 if [ $ARCH = x86_64 ]; then
 	echo "To start 32 bit application, for example \"wine\", you need to use -32 commandline option, e.g:"
 	echo "\"optirun -32 wine <application>\""

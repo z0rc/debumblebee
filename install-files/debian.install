@@ -2,14 +2,14 @@
 
 ARCH=`uname -m`
 
-echo "Installing required packages."
+echo "\nInstalling required packages."
 
 # Here we are installing standard nVidia package, which provides everything we need to make nVidia card running.
 # sudo is needed for ON_DEMAND option, dmidecode is required for autodetecting ConnectedMonitor option on some laptops.
 apt-get update
 apt-get -y install nvidia-kernel-dkms sudo dmidecode dpkg-dev
 if [ $? -ne 0 ]; then
-	echo "Package manager failed to install nvidia packages." 1>&2
+	echo "\nPackage manager failed to install nvidia packages." 1>&2
 	echo "Please check that you have non-free repository enabled." 1>&2
 	exit 2
 fi
@@ -18,26 +18,25 @@ if [ $ARCH = x86_64 ]; then
 	apt-get -y install libgl1-nvidia-glx-ia32
 	wget -P /tmp http://virtualgl.sourceforge.net/nightly.22/VirtualGL_amd64.deb
 	if [ $? -ne 0 ]; then
-		echo "Failed to download VirtualGL package." 1>&2
+		echo "\nFailed to download VirtualGL package." 1>&2
 		exit 3
 	fi
 	dpkg -i /tmp/VirtualGL_amd64.deb
 else
 	wget -P /tmp http://virtualgl.sourceforge.net/nightly.22/VirtualGL_i386.deb
 	if [ $? -ne 0 ]; then
-		echo "Failed to download VirtualGL package." 1>&2
+		echo "\nFailed to download VirtualGL package." 1>&2
 		exit 3
 	fi
 	dpkg -i /tmp/VirtualGL_i386.deb
 fi
 if [ $? -ne 0 ]; then
-	echo "Package manager failed to install VirtualGL." 1>&2
+	echo "\nPackage manager failed to install VirtualGL." 1>&2
 	exit 4
 fi
 rm -f /tmp/VirtualGL_*.deb
 
-echo
-echo "Installing and configuring support files."
+echo "\nInstalling and configuring support files."
 
 cp debian/xorg.conf.nvidia /etc/X11/
 cp debian/debumblebee /etc/init.d/debumblebee
@@ -53,44 +52,58 @@ TRIPLETS="/ /i386-linux-gnu/ /x86_64-linux-gnu/"
 
 add_slave()
 {
-	local target_link name source_path triplet
+	local target_link name source_path prefix
 	target_link="$1"
 	name="$2"
 	source_path="$3"
-	if [ -f "${source_path}" ]; then
-		echo --slave "${target_link}" "glx--${name}" "${source_path}"
+	prefix="glx--"
+
+	if [ -f "${source_path}" ] && [ -d "$(dirname "${target_link}")" ]; then
+		echo --slave "${target_link}" "${prefix}${name}" "${source_path}"
 	fi
 }
 
 add_multiarch_slave()
 {
-	local target_dir file source_dir source_sub_dir triplet
+	local target_dir target_sub_dir file source_dir source_sub_dir prefix suffix triplet
 	target_dir="$1"
-	file="$2"
-	source_dir="$3"
-	source_sub_dir="$4"
+	target_sub_dir="$2"
+	file="$3"
+	source_dir="$4"
+	source_sub_dir="$5"
+	prefix="$6"
+
 	for triplet in $TRIPLETS ; do
+		suffix="${triplet%/}"
+		suffix="${suffix:+-${suffix#/}}"
 		add_slave \
-			"${target_dir}${triplet}${file}" \
-			"${file}$(echo ${triplet} | sed -e 's/\/$//; s/^\//-/')" \
+			"${target_dir}${triplet}${target_sub_dir}${file}" \
+			"${prefix}${file}${suffix}" \
 			"${source_dir}${triplet}${source_sub_dir}${file}"
 	done
 }
 
 slaves="
-	$(add_multiarch_slave /usr/lib libGL.so.1 /usr/lib/mesa-diverted)
-	$(add_multiarch_slave /usr/lib libnvidia-cfg.so.1 /usr/lib nvidia/)
-	$(add_multiarch_slave /usr/lib libXvMCNVIDIA.so.1 /usr/lib nvidia/)
-	$(add_multiarch_slave /usr/lib libXvMCNVIDIA_dynamic.so.1 /usr/lib nvidia/)
-	$(add_slave /usr/bin/nvidia-bug-report.sh nvidia-bug-report.sh /usr/lib/nvidia/nvidia-bug-report.sh)
+	$(add_multiarch_slave /usr/lib "" libGL.so.1 /usr/lib/mesa-diverted)
 	$(add_slave /usr/lib/xorg/modules/extensions/libglx.so libglx.so /usr/lib/mesa-diverted/libglx.so)
 	$(add_slave /usr/lib/xorg/modules/drivers/nvidia_drv.so nvidia_drv.so /usr/lib/nvidia/nvidia_drv.so)
-       "
+"
+
+minor_slaves="
+	$(add_multiarch_slave /usr/lib "" libGLcore.so.1 /usr/lib nvidia/)
+	$(add_multiarch_slave /usr/lib "" libnvidia-cfg.so.1 /usr/lib nvidia/)
+	$(add_multiarch_slave /usr/lib "" libnvidia-tls.so.1 /usr/lib nvidia/)
+	$(add_multiarch_slave /usr/lib tls/ libnvidia-tls.so.1 /usr/lib nvidia/tls/ tls-)
+	$(add_multiarch_slave /usr/lib "" libXvMCNVIDIA.so.1 /usr/lib nvidia/)
+	$(add_multiarch_slave /usr/lib "" libXvMCNVIDIA_dynamic.so.1 /usr/lib nvidia/)
+	$(add_slave /usr/bin/nvidia-bug-report.sh nvidia-bug-report.sh /usr/lib/nvidia/nvidia-bug-report.sh)
+	$(add_slave /usr/lib/debug/usr/lib/xorg/modules/extensions/libglx.so libglx.so.dbg /usr/lib/mesa-diverted/libglx.so.dbg)
+"
 
 # Here we are adding new high priority alternative for glx, it should be chosen automatically.
 # It uses libGL and libglx from mesa and everyting else from nvidia, so the mesa acceleration works
 # and the nvidia X server is able to start (we are loading nvidia libGL and libglx for it in init and optirun scripts).
-update-alternatives --install /usr/lib/glx glx /usr/local/lib/debumblebee 200 $slaves
+update-alternatives --install /usr/lib/glx glx /usr/local/lib/debumblebee 200 $slaves $minor_slaves
 
 if [ $ARCH = x86_64 ]; then
 	update-alternatives --set ia32-libGL.so.1 /usr/lib32/nvidia/diversions/libGL.so.1
@@ -103,17 +116,24 @@ sed -i 's/REPLACEWITHBUSID/'$NVIDIABUSID'/g' /etc/X11/xorg.conf.nvidia
 # On some laptops nvidia X server doesn't work without ConnectedMonitor option, here is workaround for them.
 MODEL=`dmidecode --string system-product-name`
 MONITOR=`./monitor.sh $MODEL`
-
 if [ $MONITOR != NONE ]; then
 	sed -i 's/REPLACEWITHCONNECTEDMONITOR/'$MONITOR'/g' /etc/X11/xorg.conf.nvidia
 else
 	sed -i '/.*ConnectedMonitor.*/d' /etc/X11/xorg.conf.nvidia
 fi
 
-echo
-echo "Enabling debumblebee service."
+echo "\nEnabling debumblebee service."
 
 update-rc.d debumblebee defaults
 modprobe nvidia
+
+if [ -d contrib/power_off_on/$MODEL ]; then
+	echo "\nDetected laptop `dmidecode --string system-manufacturer` $MODEL."
+	echo "Installing powersave support."
+
+	cp contrib/power_off_on/$MODEL/* /usr/local/bin
+	sed -i 's/POWER_SAVE=no/POWER_SAVE=yes/g' /etc/default/debumblebee
+	contrib/acpi_call/install.sh
+fi
 
 exit 0

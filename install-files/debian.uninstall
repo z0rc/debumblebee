@@ -1,14 +1,11 @@
 #!/bin/sh
 
-ARCH=`uname -m`
-
-echo "Stopping debumblebee service."
+echo "\nStopping debumblebee service."
 
 service debumblebee stop
 rmmod nvidia
 
-echo
-echo "Removing custom debumblebee files."
+echo "\nRemoving custom debumblebee files."
 
 # After removing this alternative the one from nvidia will be chosen automatically.
 # Still glx alternative set will be removed with purging glx-alrenative-(nvidia|mesa) packages a bit later.
@@ -20,24 +17,21 @@ rm -f /etc/sudoers.d/debumblebee
 rm -f /etc/bash_completion.d/optirun
 rm -f /etc/X11/xorg.conf.nvidia
 rm -f /usr/local/bin/optirun*
+rm -f /usr/local/bin/*ablecard
 rm -rf /usr/local/lib/debumblebee
 
 update-rc.d debumblebee remove
 
-echo
-echo "Removing packages."
-
-apt-get -y purge nvidia-kernel-dkms nvidia-alternative nvidia-vdpau-driver glx-alternative-nvidia glx-alternative-mesa glx-diversions nvidia-kernel-common xserver-xorg-video-nvidia nvidia-installer-cleanup libgl1-nvidia-glx nvidia-support virtualgl dmidecode
-if [ $? -ne 0 ]; then
-	echo "Failed to remove packages." 1>&2
-	exit 1
+if [ -d /usr/src/acpi_call-0.0.1 ]; then
+	contrib/acpi_call/uninstall.sh
 fi
-if [ $ARCH = x86_64 ]; then
-	apt-get -y purge libgl1-nvidia-alternatives-ia32 libgl1-nvidia-glx-ia32
-	if [ $? -ne 0 ]; then
-		echo "Failed to remove packages." 1>&2
-		exit 1
-	fi
+
+echo "\nRemoving packages."
+
+apt-get -y purge nvidia-kernel-dkms nvidia-alternative nvidia-vdpau-driver glx-alternative-nvidia glx-alternative-mesa glx-diversions nvidia-kernel-common xserver-xorg-video-nvidia nvidia-installer-cleanup libgl1-nvidia-glx nvidia-support virtualgl
+if [ $? -ne 0 ]; then
+	echo "\nFailed to remove packages." 1>&2
+	exit 1
 fi
 
 exit 0
