@@ -72,7 +72,7 @@ variants (tested only with KDE right now), but it's up to you to find which is
 working with your DE.
 
 
-POWER SAVE OPTION
+POWERSAVE OPTION
 
 There is POWER_SAVE option in configuration file. If you set it to "yes", than
 the debumblebee init script will disable nVidia when it isn't used. This should
@@ -85,7 +85,7 @@ and dkms (it was installed with nVidia module). This module is used for passing
 command strings to acpi subsystem.
 
 Second is to prepare enablecard and disablecard shell scripts. You can find
-samples in install-files/contrib/power_off_on folder. Copy them to
+samples in install-files/contrib/power_off_on/K53SJ folder. Copy them to
 /usr/local/bin folder. You MUST change command strings passed in those scripts
 depending on your laptop. How do you find them? There are several ways. First
 check the http://hybrid-graphics-linux.tuxfamily.org/index.php?title=ACPI_calls
@@ -94,7 +94,12 @@ confirmed scripts. Also you may use test_off.sh script from acpi_call.
 
 After preparation is completed you may enable POWER_SAVE option.
 
-Right now I'm not going to enable this feature by default nor adding it to
-automatic installation. This is still experimental feature and may not work as
-it should. For example my own ASUS K53SJ starts to run coolers at full speed
-after turning off the nVidia card.
+
+ADDING POWERSAVE SUPPORT FOR YOUR LAPTOP INTO INSTALLER
+
+If you have acpi_call's which are tested and successfully working, than spend
+some time and prepare update for installer. First take enable/disablecard
+scripts form install-files/contrib/power_off_on/K53SJ and replace acpi_call's
+there with yours. Then provide me those files with output of
+"dmidecode --string system-product-name". Pastebin and github are strongly
+recommended. Also you may create own fork, add support and submit pull request.

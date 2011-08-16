@@ -66,8 +66,6 @@ If it isn't helping, then try to change "DFP-0" to "CRT-0".
 
 TODO
 
-* Improve power save support. Add list of working acpi_call laptop models with
-  confirmed working command strings.
 * Rewrite optirun with perl, so it can use SGID bit which allows to apply more
   strict security permissions and get rid of sudoers file.
 
