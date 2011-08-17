@@ -16,19 +16,24 @@ fi
 if [ $ARCH = x86_64 ]; then
 # I'd like to run wine with optirun, so this package is also required.
 	apt-get -y install libgl1-nvidia-glx-ia32
-	wget -P /tmp http://virtualgl.sourceforge.net/nightly.22/VirtualGL_amd64.deb
+	wget -P /tmp http://virtualgl.sourceforge.net/nightly.23/VirtualGL_2.2.90_amd64.deb
 	if [ $? -ne 0 ]; then
 		echo "\nFailed to download VirtualGL package." 1>&2
 		exit 3
 	fi
-	dpkg -i /tmp/VirtualGL_amd64.deb
+	wget -P /tmp http://virtualgl.sourceforge.net/nightly.23/VirtualGL32_2.2.90_amd64.deb
+	if [ $? -ne 0 ]; then
+		echo "\nFailed to download VirtualGL32 package." 1>&2
+		exit 3
+	fi
+	dpkg -i /tmp/VirtualGL*_2.2.90_amd64.deb
 else
-	wget -P /tmp http://virtualgl.sourceforge.net/nightly.22/VirtualGL_i386.deb
+	wget -P /tmp http://virtualgl.sourceforge.net/nightly.23/VirtualGL_2.2.90_i386.deb
 	if [ $? -ne 0 ]; then
 		echo "\nFailed to download VirtualGL package." 1>&2
 		exit 3
 	fi
-	dpkg -i /tmp/VirtualGL_i386.deb
+	dpkg -i /tmp/VirtualGL_2.2.90_i386.deb
 fi
 if [ $? -ne 0 ]; then
 	echo "\nPackage manager failed to install VirtualGL." 1>&2
