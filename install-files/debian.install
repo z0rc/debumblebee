@@ -42,6 +42,7 @@ cp debian/xorg.conf.nvidia /etc/X11/
 cp debian/debumblebee /etc/init.d/debumblebee
 cp debian/debumblebee.default /etc/default/debumblebee
 cp debian/debumblebee.sudoers /etc/sudoers.d/debumblebee
+chmod 440 /etc/sudoers.d/debumblebee
 cp debian/optirun /usr/local/bin
 cp debian/optirun.bash /etc/bash_completion.d/optirun
 mkdir /usr/local/lib/debumblebee
