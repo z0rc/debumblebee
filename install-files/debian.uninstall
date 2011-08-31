@@ -28,7 +28,7 @@ fi
 
 echo "\nRemoving packages."
 
-apt-get -y purge nvidia-kernel-dkms nvidia-alternative nvidia-vdpau-driver glx-alternative-nvidia glx-alternative-mesa glx-diversions nvidia-kernel-common xserver-xorg-video-nvidia nvidia-installer-cleanup libgl1-nvidia-glx nvidia-support virtualgl
+apt-get -y purge nvidia-kernel-dkms nvidia-alternative nvidia-vdpau-driver glx-alternative-nvidia glx-alternative-mesa glx-diversions nvidia-kernel-common xserver-xorg-video-nvidia nvidia-installer-cleanup libgl1-nvidia-glx nvidia-support virtualgl*
 if [ $? -ne 0 ]; then
 	echo "\nFailed to remove packages." 1>&2
 	exit 1
