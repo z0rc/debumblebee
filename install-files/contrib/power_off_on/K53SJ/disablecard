@@ -7,15 +7,19 @@ acpi_call () {
 	result=$(cat /proc/acpi/call)
 	case "$result" in
 	    failed)
-		echo "acpi_call $* failed."
+		echo "acpi_call $* failed." 1>&2
 		final=$(( $final & 0 ))
 		;;
 	    ok)
-		echo "acpi_call $* succeded."
+		if [ "$OPT_VERBOSE" = "yes" ]; then
+			echo "acpi_call $* succeded."
+		fi
 		final=$(( $final & 1 ))
 		;;
 	    *)
-		echo "acpi_call $* returned $result."
+		if [ "$OPT_VERBOSE" = "yes" ]; then
+			echo "acpi_call $* returned $result."
+		fi
 		final=$(( $final & 1 ))
 		;;
 	esac

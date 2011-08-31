@@ -7,6 +7,10 @@ ON_DEMAND=yes
 # Disabled by default.
 POWER_SAVE=no
 
+# Be more verbose, display technical information. Same as optirun -v switch.
+# Disabled by default.
+VERBOSE=no
+
 # Try to disable screensaver when the optirun is running.
 # Off by default.
 DISABLE_SCREENSAVER=no

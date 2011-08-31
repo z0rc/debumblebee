@@ -1,1 +1,2 @@
 ALL ALL=(ALL:ALL) NOPASSWD: /etc/init.d/debumblebee
+Defaults env_keep += "OPT_VERBOSE"

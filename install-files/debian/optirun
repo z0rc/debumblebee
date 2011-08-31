@@ -8,12 +8,40 @@ else
 	PIDFILE=/tmp/optirun.pid
 fi
 
-if [ $1 = "-h" -o $1 = "--help" ]; then
-	echo "Usage: optirun [-32] <application> [application arguments]\n"
-	echo " -32 : Launch 32 bit application on 64 bit arch."
-	echo "       Without this option application is launched under current arch. (`uname -m`)\n"
+# Default options.
+OPT_VERBOSE=$VERBOSE
+OPT_HELP=false
+OPT_LIB=/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia
+
+# Parsing command line.
+if [ $# -eq 0 ]; then
+	OPT_HELP=true
+else
+	while [ $# -gt 0 ]; do
+		case "$1" in
+			-3|-32|--32) OPT_LIB=/usr/lib32/nvidia ;;
+			-h|-help|--help) OPT_HELP=true ;;
+			-v|-verbose|--verbose) OPT_VERBOSE=yes ;;
+			--) shift; break ;;
+			*) break ;;
+		esac
+	shift
+done
+fi
+
+# Show help when needed.
+if $OPT_HELP; then
+	echo "Usage: optirun [options] <application> [application arguments]\n"
+	echo "optirun options list:"
+	echo " -3|-32|--32           : Launch 32 bit application on 64 bit arch."
+	echo "                         Without this option application is launched under current arch. (`uname -m`)"
+	echo " -v|-verbose|--verbose : Be verbose, show more technical inforation."
+	echo " -h|-help|--help       : Show this help."
 	exit 0
 fi
+
+# Or be verbose if requested.
+export OPT_VERBOSE=$OPT_VERBOSE
 
 if [ "$ON_DEMAND" = "yes" ]; then
 # Checking pids from pidfile.
@@ -43,12 +71,7 @@ if [ "$DISABLE_SCREENSAVER" = "yes" ]; then
 fi
 
 # Launch selected application through VirtualGL using 32 or 64 bit shared libs.
-if [ $1 = "-32" ]; then
-	shift
-	vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld /usr/lib32/nvidia "$@"
-else
-	vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld /usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia "$@"
-fi
+vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld $OPT_LIB "$@"
 
 # Removing current pid from pidfile
 if [ "$ON_DEMAND" = "yes" ]; then
