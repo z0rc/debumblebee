@@ -25,7 +25,7 @@ LD_LIBRARY_PATH=/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia
 DESC="Optimus X server"
 NAME=debumblebee
 DAEMON=/usr/bin/X
-DAEMON_ARGS="-config /etc/X11/xorg.conf.nvidia -modulepath /usr/local/lib/debumblebee,/usr/lib/xorg/modules -sharevts $VGL_DISPLAY"
+DAEMON_ARGS="-config /etc/X11/xorg.conf.nvidia -modulepath /usr/local/lib/debumblebee,/usr/lib/xorg/modules -ignoreABI -sharevts $VGL_DISPLAY"
 PIDFILE=/tmp/.X${VGL_DISPLAY#?}-lock
 SCRIPTNAME=/etc/init.d/$NAME
 
