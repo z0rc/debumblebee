@@ -51,17 +51,22 @@ Right now VDPAU video playback isn't supported.
 
 TROUBLESHOOTING
 
-"[VGL] ERROR: Could not open display :1"
+"[VGL] ERROR: Could not open display :8"
 This means that nVidia X server wasn't able to start with current configuration.
+First you need to check /var/log/Xorg.8.log for "(EE)" strings. Usually it
+provides enough information for troubleshooting.
+
 The most common issue at this situation is that nVidia module fails to
 autodetect name of connected monitor (DFP-0 or CRT-0). You may report this bug,
-but you need to attach /var/log/Xorg.1.log, /etc/X11/xorg.conf.nvidia with
+but you need to attach /var/log/Xorg.8.log, /etc/X11/xorg.conf.nvidia with
 outputs of "nvidia-xconfig --query-gpu-info" and
 "dmidecode --string system-product-name". DO NOT provide this directly in your
 ticket, USE pastebin. Manually this issue can be fixed by adding the following
 string into Device section in /etc/X11/xorg.conf.nvidia:
 Option "ConnectedMonitor" "DFP-0"
 If it isn't helping, then try to change "DFP-0" to "CRT-0".
+
+Also it's recommended to check for "GLX" strings and notices about libglx.so.
 
 
 TODO
