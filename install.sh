@@ -27,6 +27,12 @@ else
 	exit 1
 fi
 
+if [ `lsb_release -r -s` = stable ]; then
+	echo "Unfortunately this installer supports only Testing and Unstable distributions."
+	echo "Feel free to implement stable support yourself and send patches."
+	exit 1
+fi
+
 if [ `id -u` != 0 ]; then
 	echo "This script should be started with root privileges." 1>&2
 	exit 1
