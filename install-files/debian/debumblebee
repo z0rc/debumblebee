@@ -52,7 +52,7 @@ case $1 in
 		if [ "$POWER_SAVE" = "yes" -a -x "$DISABLECARD" ]; then
 			log_daemon_msg "Disabling nVidia card. POWER_SAVE option is enabled" "$NAME"
 			log_end_msg 0
-			$DISABLECARD
+			OPT_VERBOSE=$VERBOSE $DISABLECARD
 			exit 0
 		else
 			log_daemon_msg "Not starting $DESC. ON_DEMAND option is enabled" "$NAME"
@@ -71,7 +71,7 @@ case $1 in
 	if [ "$ON_DEMAND" = "yes" -a "$POWER_SAVE" = "yes" -a -x "$ENABLECARD" ]; then
 		log_daemon_msg "Enabling nVidia card before shutdown" "$NAME"
 		log_end_msg 0
-		$ENABLECARD
+		OPT_VERBOSE=$VERBOSE $ENABLECARD
 	else
 		log_daemon_msg "Stopping $DESC" "$NAME"
 		do_stop
