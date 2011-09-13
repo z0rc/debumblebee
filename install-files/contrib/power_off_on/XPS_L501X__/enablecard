@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# This script should contain the command(s) necessary to switch on the nVidia card.
+
+acpi_call () {
+    echo "$*" > /proc/acpi/call
+    result=$(cat /proc/acpi/call)
+    case "$result" in
+        failed) echo "acpi_call $* failed." ;;
+        ok) echo "acpi_call $* succeded." ;;
+        *) echo "acpi_call $* returned $result." ;;
+    esac
+}
+
+modprobe acpi_call
+
+if ! lsmod | grep -q acpi_call; then
+    echo "Error: acpi_call module not loaded." 1>&2
+    exit 1
+fi
+
+# Replace this command string depending on your laptop model.
+# This one works only for Dell XPS L501X.
+acpi_call "\_SB.PCI0.P0P2.PEGP._PS0"
+
+modprobe nvidia
+
+if lsmod | grep -q nvidia; then
+    echo "Enabling nVidia card succeded."
+    exit 0
+else
+    echo "Enabling nVidia card failed."
+    exit 1
+fi
