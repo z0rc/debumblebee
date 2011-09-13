@@ -1,3 +1,8 @@
+# Select module which will be used with nVidia card.
+# Default variant is 'nvidia' which is closed source and gives more perfomance.
+# Another possible option is open source 'nouveau', but it's slower.
+MODULE=nvidia
+
 # Do not run nVidia X server constantly and start it only when needed.
 # Enabled by default.
 ON_DEMAND=yes

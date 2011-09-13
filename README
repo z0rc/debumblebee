@@ -25,6 +25,9 @@ This project allows you to utilize nVidia graphics card with proprietary driver
 while running main desktop on Intel card. This service is only for Intel/nVidia
 combination, it won't work with Intel/ATI or any other combination.
 
+Also it provides experimental support of nouveau module, but main goal is still
+support of proprietary driver.
+
 debumblebee is combination of additional X server for nVidia graphics card and
 VirtualGL package which allows to access nVidia X server screen from Intel X
 server screen with full OpenGL support.

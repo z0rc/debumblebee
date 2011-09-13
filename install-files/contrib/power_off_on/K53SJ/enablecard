@@ -2,6 +2,12 @@
 
 # This script should contain the command(s) necessary to switch on the nVidia card.
 
+if [ -r /etc/default/debumblebee ]; then
+	. /etc/default/debumblebee
+else
+	MODULE=nvidia
+fi
+
 acpi_call () {
 	echo "$*" > /proc/acpi/call
 	result=$(cat /proc/acpi/call)
@@ -23,9 +29,9 @@ fi
 # This one works only for ASUS K53SJ.
 acpi_call "\_SB.PCI0.PEGR.GFX0._PS0"
 
-modprobe nvidia
+modprobe $MODULE
 
-if lsmod | grep -q nvidia; then
+if lsmod | grep -q $MODULE; then
 	echo "Enabling nVidia card succeded."
 	exit 0
 else

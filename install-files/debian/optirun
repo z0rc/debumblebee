@@ -11,7 +11,13 @@ fi
 # Default options.
 OPT_VERBOSE=$VERBOSE
 OPT_HELP=false
-OPT_LIB=/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia
+if [ $MODULE = nvidia ]; then
+	OPT_LIB=/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia
+elif [ $MODULE = nouveau ]; then
+	OPT_LIB=/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`
+else
+	echo "Error: unknown MODULE option." 2>&1
+fi
 
 # Parsing command line.
 if [ $# -eq 0 ]; then
@@ -19,7 +25,13 @@ if [ $# -eq 0 ]; then
 else
 	while [ $# -gt 0 ]; do
 		case "$1" in
-			-3|-32|--32) OPT_LIB=/usr/lib32/nvidia ;;
+			-3|-32|--32)
+				if [ $MODULE = nvidia ]; then
+					OPT_LIB=/usr/lib32/nvidia
+				elif [ $MODULE = nouveau ]; then
+					OPT_LIB=/usr/lib32
+				fi
+				;;
 			-h|-help|--help) OPT_HELP=true ;;
 			-v|-verbose|--verbose) OPT_VERBOSE=yes ;;
 			--) shift; break ;;

@@ -2,6 +2,12 @@
 
 # This script should contain the command(s) necessary to switch off the nVidia card.
 
+if [ -r /etc/default/debumblebee ]; then
+	. /etc/default/debumblebee
+else
+	MODULE=nvidia
+fi
+
 acpi_call () {
 	echo "$*" > /proc/acpi/call
 	result=$(cat /proc/acpi/call)
@@ -25,10 +31,10 @@ acpi_call () {
 	esac
 }
 
-rmmod nvidia
+rmmod $MODULE
 
-if lsmod | grep -q nvidia; then
-	echo "Error: could not unload nvidia module, leaving card turned on." 1>&2
+if lsmod | grep -q $MODULE; then
+	echo "Error: could not unload $MODULE module, leaving card turned on." 1>&2
 	exit 1
 fi
 

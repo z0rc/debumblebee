@@ -17,17 +17,25 @@
 if [ -r /etc/default/debumblebee ]; then
 	. /etc/default/debumblebee
 else
+	MODULE=nvidia
 	VGL_DISPLAY=:8
 fi
 
 PATH=/sbin:/usr/local/sbin:/usr/sbin:/bin:/usr/local/bin:/usr/bin
-LD_LIBRARY_PATH=/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia
 DESC="Optimus X server"
 NAME=debumblebee
 DAEMON=/usr/bin/X
-DAEMON_ARGS="-config /etc/X11/xorg.conf.nvidia -modulepath /usr/local/lib/debumblebee,/usr/lib/xorg/modules -sharevts $VGL_DISPLAY"
 PIDFILE=/tmp/.X${VGL_DISPLAY#?}-lock
 SCRIPTNAME=/etc/init.d/$NAME
+if [ $MODULE = nvidia ]; then
+	LD_LIBRARY_PATH=/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia
+	DAEMON_ARGS="-config /etc/X11/xorg.conf.nvidia -modulepath /usr/local/lib/debumblebee,/usr/lib/xorg/modules -sharevts $VGL_DISPLAY"
+elif [ $MODULE = nouveau ]; then
+	DAEMON_ARGS="-config /etc/X11/xorg.conf.nouveau -sharevts $VGL_DISPLAY"
+else
+	echo "Error: unknown MODULE option." 1>&2
+	exit 1
+fi
 
 . /lib/lsb/init-functions
 

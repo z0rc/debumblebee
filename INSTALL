@@ -9,6 +9,7 @@ Unfortunately, I can provide limited support for them.
 Also it's strongly recommended to run 'git submodule init' before starting the
 installation process.
 
+
 MANUAL INSTALLATION
 
 1) Install proprietary nVidia graphics driver in distro's preferred way (under
@@ -72,6 +73,14 @@ Disable screensaver option is off by default. To make it work correctly you
 need to set HEARTBEAT_CMD option depending on your DE. I've provided several
 variants (tested only with KDE right now), but it's up to you to find which is
 working with your DE.
+
+
+MODULE OPTION
+
+Originally debumblebee supported only closed source nVidia module. But starting
+from version 0.6 nouveau support was added. Still it's very experimental and not
+suitable for daily use as nouveau lacks support of modern hardware. So right now
+this is just PoC which might be extended later.
 
 
 POWERSAVE OPTION
