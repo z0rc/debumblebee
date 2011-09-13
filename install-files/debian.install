@@ -114,9 +114,8 @@ fi
 NVIDIABUSID=PCI:`lspci -mm | egrep 'VGA.*nVidia|3D.*nVidia' | cut -f1 -d' ' | tr . : | sed 's/0\([0-9a-f]:\)/\1/g'`
 sed -i 's/REPLACEWITHBUSID/'$NVIDIABUSID'/g' /etc/X11/xorg.conf.nvidia
 
-# Model detection, spaces are turned into '_'
-RAW_MODEL=`dmidecode --string system-product-name`
-MODEL=`echo -n "$RAW_MODEL" | sed 's/ /_/g'`
+# Model detection, spaces are turned into '_'.
+MODEL=`dmidecode --string system-product-name | sed 's/ /_/g'`
 
 # On some laptops nvidia X server doesn't work without ConnectedMonitor option, here is workaround for them.
 MONITOR=`./monitor.sh $MODEL`
