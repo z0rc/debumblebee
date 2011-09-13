@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# This script should contain the command(s) nessesary to switch off the nVidia card.
+# This script should contain the command(s) necessary to switch off the nVidia card.
 
 acpi_call () {
 	echo "$*" > /proc/acpi/call
