@@ -67,7 +67,7 @@ if [ "$ON_DEMAND" = "yes" ]; then
 			fi
 		done
 	fi
-# If pidfile is empty or missing, then there is no other optirun instances running.
+# If pidfile is empty or missing, then there are no other optirun instances running.
 # So we need to start X server for nVidia card.
 	if [ ! -s $PIDFILE ]; then
 		sudo /etc/init.d/debumblebee demandon
@@ -85,10 +85,10 @@ fi
 # Launch selected application through VirtualGL using 32 or 64 bit shared libs.
 vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld $OPT_LIB "$@"
 
-# Removing current pid from pidfile
+# Removing current pid from pidfile.
 if [ "$ON_DEMAND" = "yes" ]; then
 	sed -i '/'$$'/d' $PIDFILE
-# If pidfile is empty, then there is no other optirun instances running.
+# If pidfile is empty, then there are no other optirun instances running.
 # So we need to stop X server for nVidia card.
 	if [ ! -s $PIDFILE ]; then
 		rm -f $PIDFILE

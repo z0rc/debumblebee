@@ -62,9 +62,7 @@ if [ $ARCH = x86_64 ]; then
 	echo "To start 32 bit application, for example \"wine\", you need to use -32 commandline option, e.g:"
 	echo "\"optirun -32 wine <application>\""
 fi
-echo "You may check the output of \"optirun glxgears -info\" for confirmation that installation was successfull."
-echo
-echo "                  https://github.com/z0rc3r/debumblebee"
-echo
+echo "You may check the output of \"optirun glxgears -info\" for confirmation that installation was successfull.\n"
+echo "                  https://github.com/z0rc3r/debumblebee\n"
 
 exit 0
