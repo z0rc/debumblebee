@@ -6,9 +6,6 @@ bit Sid. If you are running Testing, Stable or different architecture and
 debumblebee isn't working, then please check Manual Installation section.
 Unfortunately, I can provide limited support for them.
 
-Also it's strongly recommended to run 'git submodule init' before starting the
-installation process.
-
 
 MANUAL INSTALLATION
 
