@@ -16,7 +16,7 @@ if [ $MODULE = nvidia ]; then
 elif [ $MODULE = nouveau ]; then
 	OPT_LIB=/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`
 else
-	echo "Error: unknown MODULE option." 2>&1
+	echo "Error: unknown MODULE option." 1>&2
 fi
 
 # Parsing command line.
@@ -53,7 +53,10 @@ if $OPT_HELP; then
 fi
 
 # Or be verbose if requested.
-export OPT_VERBOSE=$OPT_VERBOSE
+if [ "$OPT_VERBOSE" = "yes" ]; then
+	export OPT_VERBOSE=$OPT_VERBOSE
+	VGL_VERBOSE="+v"
+fi
 
 if [ "$ON_DEMAND" = "yes" ]; then
 # Checking pids from pidfile.
@@ -67,10 +70,19 @@ if [ "$ON_DEMAND" = "yes" ]; then
 			fi
 		done
 	fi
-# If pidfile is empty or missing, then there are no other optirun instances running.
+# If pidfile is empty or missing, then there is no other optirun instances running.
 # So we need to start X server for nVidia card.
 	if [ ! -s $PIDFILE ]; then
 		sudo /etc/init.d/debumblebee demandon
+	fi
+# Check that X server is running.
+	if ! service debumblebee status > /dev/null; then
+		echo "Error: debumblebee service was not able to start." 1>&2
+		echo "Actually this means that launch of X server for nVidia card failed for some reason." 1>&2
+		echo "You may check the log at /var/log/Xorg.${VGL_DISPLAY#?}.log" 1>&2
+# We need to make sure that card is disabled at the end even if we failed to start.
+		sudo /etc/init.d/debumblebee demandoff
+		exit 1
 	fi
 # Adding current pid to pidfile.
 	echo $$ >> $PIDFILE
@@ -83,12 +95,12 @@ if [ "$DISABLE_SCREENSAVER" = "yes" ]; then
 fi
 
 # Launch selected application through VirtualGL using 32 or 64 bit shared libs.
-vglrun -c $VGL_COMPRESS -d $VGL_DISPLAY -ld $OPT_LIB "$@"
+vglrun $VGL_VERBOSE -c $VGL_COMPRESS -d $VGL_DISPLAY -ld $OPT_LIB "$@"
 
-# Removing current pid from pidfile.
+# Removing current pid from pidfile
 if [ "$ON_DEMAND" = "yes" ]; then
 	sed -i '/'$$'/d' $PIDFILE
-# If pidfile is empty, then there are no other optirun instances running.
+# If pidfile is empty, then there is no other optirun instances running.
 # So we need to stop X server for nVidia card.
 	if [ ! -s $PIDFILE ]; then
 		rm -f $PIDFILE
