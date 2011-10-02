@@ -18,6 +18,8 @@
 
 ARCH=`uname -m`
 
+git submodule init
+
 if [ `lsb_release -i -s` = Debian -o `lsb_release -c -s` = debian ]; then
 	DISTRO=DEBIAN
 else
@@ -40,7 +42,7 @@ fi
 
 echo "Welcome to the debumblebee installation v"`cat VERSION`"."
 echo "This script will configure your system to utilize both Intel and nVidia graphics cards."
-echo "Are you sure you want to proceed? (Y/N)"
+echo "Are you sure you want to proceed? (y/N)"
 read ANSWER
 case $ANSWER in
 	y|Y) ;;
