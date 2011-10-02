@@ -2,8 +2,6 @@
 
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 
-cd $DIR/../../.. && git submodule init
-
 mkdir /usr/src/acpi_call-0.0.1
 cp $DIR/dkms.conf $DIR/src/* /usr/src/acpi_call-0.0.1
 dkms add -m acpi_call -v 0.0.1
