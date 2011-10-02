@@ -56,7 +56,7 @@ TROUBLESHOOTING
 
 "[VGL] ERROR: Could not open display :8"
 This means that nVidia X server wasn't able to start with current configuration.
-First you need to check /var/log/Xorg.8.log for "(EE)" strings. Usually it
+First you need to check /var/log/Xorg.8.log for "(EE)" strings. Usually this
 provides enough information for troubleshooting.
 
 The most common issue at this situation is that nVidia module fails to
@@ -69,14 +69,14 @@ string into Device section in /etc/X11/xorg.conf.nvidia:
 Option "ConnectedMonitor" "DFP-0"
 If it isn't helping, then try to change "DFP-0" to "CRT-0".
 
-Also it's recommended to check for "GLX" strings and notices about libglx.so.
+If you have other issues about GL errors, then it's recommended to check for
+notices about libglx.so and GLX in Xorg log.
+
+Anyway, if you have any issues please create ticket at
+https://github.com/z0rc/debumblebee
 
 
 TODO
 
 * Rewrite optirun with perl, so it can use SGID bit which allows to apply more
   strict security permissions and get rid of sudoers file.
-
-
-If you have any issues please create ticket at
-https://github.com/z0rc/debumblebee
