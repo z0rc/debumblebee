@@ -76,7 +76,7 @@ if [ "$ON_DEMAND" = "yes" ]; then
 		sudo /etc/init.d/debumblebee demandon
 	fi
 # Check that X server is running.
-	if ! service debumblebee status > /dev/null; then
+	if ! /etc/init.d/debumblebee status > /dev/null; then
 		echo "Error: debumblebee service was not able to start." 1>&2
 		echo "Actually this means that launch of X server for nVidia card failed for some reason." 1>&2
 		echo "You may check the log at /var/log/Xorg.${VGL_DISPLAY#?}.log" 1>&2
