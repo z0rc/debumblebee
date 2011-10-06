@@ -18,7 +18,7 @@
 
 ARCH=`uname -m`
 
-git submodule init
+git submodule init && git submodule update
 
 if [ `lsb_release -i -s` = Debian -o `lsb_release -c -s` = debian ]; then
 	DISTRO=DEBIAN
