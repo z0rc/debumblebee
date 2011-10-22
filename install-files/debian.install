@@ -7,7 +7,7 @@ echo "\nInstalling required packages."
 # Here we are installing standard nVidia package, which provides everything we need to make nVidia card running.
 # sudo is needed for ON_DEMAND option, dmidecode is required for autodetecting ConnectedMonitor option on some laptops.
 apt-get update
-apt-get -y install nvidia-kernel-dkms libgl1-mesa-dri-experimental sudo dmidecode dpkg-dev
+apt-get -o APT::Install-Recommends=true -y install nvidia-kernel-dkms libgl1-mesa-dri-experimental sudo dmidecode dpkg-dev
 if [ $? -ne 0 ]; then
 	echo "\nPackage manager failed to install nvidia packages." 1>&2
 	echo "Please check that you have non-free repository enabled." 1>&2
@@ -15,7 +15,7 @@ if [ $? -ne 0 ]; then
 fi
 if [ $ARCH = x86_64 ]; then
 # I'd like to run wine with optirun, so this package is also required.
-	apt-get -y install libgl1-nvidia-glx-ia32
+	apt-get -o APT::Install-Recommends=true -y install libgl1-nvidia-glx-ia32
 	wget -P /tmp http://virtualgl.sourceforge.net/nightly.23/VirtualGL_2.2.90_amd64.deb http://virtualgl.sourceforge.net/nightly.23/VirtualGL32_2.2.90_amd64.deb
 	if [ $? -ne 0 ]; then
 		echo "\nFailed to download VirtualGL packages." 1>&2
