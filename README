@@ -42,9 +42,7 @@ USAGE
 
 Check INSTALL file for details. After installation your desktop and all
 applications will be running on Intel card. To run application with nVidia card
-you need to start it with optirun, for example: "optirun glxgears". To start a
-32 bit application on 64 bit arch you should use "-32" option, e.g
-"optirun -32 wine ./game.exe".
+you need to start it with optirun, for example: "optirun glxgears".
 
 
 LIMITATIONS
