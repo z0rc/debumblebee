@@ -14,6 +14,7 @@ update-alternatives --remove glx /usr/local/lib/debumblebee
 rm -f /etc/init.d/debumblebee
 rm -f /etc/default/debumblebee
 rm -f /etc/sudoers.d/debumblebee
+rm -f /etc/pm/sleep.d/20_debumblebee
 rm -f /etc/bash_completion.d/optirun
 rm -f /etc/X11/xorg.conf.nvidia
 rm -f /etc/X11/xorg.conf.nouveau

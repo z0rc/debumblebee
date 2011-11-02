@@ -41,6 +41,7 @@ echo "\nInstalling and configuring support files."
 cp debian/xorg.conf.* /etc/X11/
 cp debian/debumblebee /etc/init.d/debumblebee
 cp debian/debumblebee.default /etc/default/debumblebee
+cp debian/20_debumblebee /etc/pm/sleep.d
 cp debian/debumblebee.sudoers /etc/sudoers.d/debumblebee
 chmod 440 /etc/sudoers.d/debumblebee
 cp debian/optirun /usr/local/bin
