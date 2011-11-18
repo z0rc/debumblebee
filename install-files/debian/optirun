@@ -37,13 +37,6 @@ OPT_VERBOSE=$VERBOSE
 OPT_HELP=false
 OPT_READBACK=$VGL_READBACK
 OPT_COMPRESS=$VGL_COMPRESS
-if [ $MODULE = nvidia ]; then
-	OPT_LIB="/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia:/usr/lib32/nvidia"
-elif [ $MODULE = nouveau ]; then
-	OPT_LIB="/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`:/usr/lib32"
-else
-	echo "Error: unknown MODULE option." 1>&2
-fi
 
 # Parsing command line.
 if [ $# -eq 0 ]; then
@@ -72,6 +65,14 @@ if $OPT_HELP; then
 	echo " -v|-verbose|--verbose                   : Be verbose, show more technical inforation."
 	echo " -h|-help|--help                         : Show this help."
 	exit 0
+fi
+
+# Check for valid module option and set special LD path for nvidia
+if [ "$MODULE" = "nvidia" ]; then
+	OPT_LIB="/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia:/usr/lib32/nvidia"
+elif [ "$MODULE" != "nouveau" ]; then
+	echo "Error: unknown MODULE option." 1>&2
+	exit 1
 fi
 
 # Or be verbose if requested.
