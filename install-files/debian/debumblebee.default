@@ -32,6 +32,10 @@ HEARTBEAT_CMD="qdbus org.freedesktop.ScreenSaver /ScreenSaver SimulateUserActivi
 # Intel card. Check the output of "vglrun -h" for other variants.
 VGL_COMPRESS=xv
 
+# VirtualGL readback option. Details are at:
+# http://www.virtualgl.org/vgldoc/2_2_1/#hd0019001
+VGL_READBACK=pbo
+
 # Display used by nVidia X server.
 VGL_DISPLAY=:8
 

@@ -5,12 +5,14 @@ if [ -r /etc/default/debumblebee ]; then
 else
 	VGL_DISPLAY=:8
 	VGL_COMPRESS=xv
+	VGL_READBACK=pbo
 	PIDFILE=/tmp/optirun.pid
 fi
 
 # Default options.
 OPT_VERBOSE=$VERBOSE
 OPT_HELP=false
+OPT_READBACK=$VGL_READBACK
 if [ $MODULE = nvidia ]; then
 	OPT_LIB="/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia:/usr/lib32/nvidia"
 elif [ $MODULE = nouveau ]; then
@@ -27,6 +29,7 @@ else
 		case "$1" in
 			-h|-help|--help) OPT_HELP=true ;;
 			-v|-verbose|--verbose) OPT_VERBOSE=yes ;;
+			-r|-readback|--readback) shift;	OPT_READBACK=$1 ;;
 			--) shift; break ;;
 			*) break ;;
 		esac
@@ -38,8 +41,9 @@ fi
 if $OPT_HELP; then
 	echo "Usage: optirun [options] <application> [application arguments]\n"
 	echo "optirun options list:"
-	echo " -v|-verbose|--verbose : Be verbose, show more technical inforation."
-	echo " -h|-help|--help       : Show this help."
+	echo " -r|-readback|--readback <none|pbo|sync> : Override VGL_READBACK option. (default is \"$VGL_READBACK\")"
+	echo " -v|-verbose|--verbose                   : Be verbose, show more technical inforation."
+	echo " -h|-help|--help                         : Show this help."
 	exit 0
 fi
 
@@ -48,6 +52,8 @@ if [ "$OPT_VERBOSE" = "yes" ]; then
 	export OPT_VERBOSE=$OPT_VERBOSE
 	VGL_VERBOSE="+v"
 fi
+
+export VGL_READBACK=$OPT_READBACK
 
 if [ "$ON_DEMAND" = "yes" ]; then
 # Checking pids from pidfile.
