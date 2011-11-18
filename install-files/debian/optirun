@@ -1,5 +1,28 @@
 #!/bin/sh
 
+# Funtion for launch VirtualGL client with particular compression options.
+# Otherwise vlgrun won't be able to work.
+vglclient_start () {
+if [ "$1" = "jpeg" -o "$1" = "rgb" -o "$1" = "yuv" ]; then
+	if [ "$2" = "yes" ]; then
+		vglclient -gl -detach
+	else
+		vglclient -gl -detach -l /dev/null 1>/dev/null 2>&1
+	fi
+fi
+}
+
+# Also we need to kill vglclient sometimes, doh.
+vglclient_stop () {
+	if [ "$1" = "jpeg" -o "$1" = "rgb" -o "$1" = "yuv" ]; then
+		if [ "$2" = "yes" ]; then
+			vglclient -kill
+		else
+			vglclient -kill 1>/dev/null 2>&1
+		fi
+	fi
+}
+
 if [ -r /etc/default/debumblebee ]; then
 	. /etc/default/debumblebee
 else
@@ -72,9 +95,10 @@ if [ "$ON_DEMAND" = "yes" ]; then
 		done
 	fi
 # If pidfile is empty or missing, then there is no other optirun instances running.
-# So we need to start X server for nVidia card.
+# So we need to start X server for nVidia card and sometimes vglclient.
 	if [ ! -s $PIDFILE ]; then
 		sudo /etc/init.d/debumblebee demandon
+		vglclient_start $OPT_COMPRESS $OPT_VERBOSE
 	fi
 # Check that X server is running.
 	sleep 1
@@ -82,6 +106,7 @@ if [ "$ON_DEMAND" = "yes" ]; then
 		echo "Error: debumblebee service was not able to start." 1>&2
 		echo "Actually this means that launch of X server for nVidia card failed for some reason." 1>&2
 		echo "You may check the log at /var/log/Xorg.${VGL_DISPLAY#?}.log" 1>&2
+		vglclient_stop $OPT_COMPRESS $OPT_VERBOSE
 # We need to make sure that card is disabled at the end even if we failed to start.
 		sudo /etc/init.d/debumblebee demandoff
 		exit 1
@@ -96,16 +121,27 @@ if [ "$DISABLE_SCREENSAVER" = "yes" ]; then
 	trap "kill $!" INT TERM EXIT
 fi
 
+# Always start vglclient at this case
+if [ "$ON_DEMAND" = "no" ]; then
+	vglclient_start $OPT_COMPRESS $OPT_VERBOSE
+fi
+
 # Launch selected application through VirtualGL using 32 or 64 bit shared libs.
 vglrun $VGL_VERBOSE -c $OPT_COMPRESS -d $VGL_DISPLAY -ld $OPT_LIB "$@"
+
+# And always kill it too.
+if [ "$ON_DEMAND" = "no" ]; then
+	vglclient_stop $OPT_COMPRESS $OPT_VERBOSE
+fi
 
 # Removing current pid from pidfile
 if [ "$ON_DEMAND" = "yes" ]; then
 	sed -i '/'$$'/d' $PIDFILE
 # If pidfile is empty, then there is no other optirun instances running.
-# So we need to stop X server for nVidia card.
+# So we need to stop X server for nVidia card and vglclient.
 	if [ ! -s $PIDFILE ]; then
 		rm -f $PIDFILE
+		vglclient_stop $OPT_COMPRESS $OPT_VERBOSE
 		sudo /etc/init.d/debumblebee demandoff
 	fi
 fi
