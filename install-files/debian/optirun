@@ -13,6 +13,7 @@ fi
 OPT_VERBOSE=$VERBOSE
 OPT_HELP=false
 OPT_READBACK=$VGL_READBACK
+OPT_COMPRESS=$VGL_COMPRESS
 if [ $MODULE = nvidia ]; then
 	OPT_LIB="/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`/nvidia:/usr/lib32/nvidia"
 elif [ $MODULE = nouveau ]; then
@@ -30,6 +31,7 @@ else
 			-h|-help|--help) OPT_HELP=true ;;
 			-v|-verbose|--verbose) OPT_VERBOSE=yes ;;
 			-r|-readback|--readback) shift;	OPT_READBACK=$1 ;;
+			-c|-compress|--compress) shift; OPT_COMPRESS=$1 ;;
 			--) shift; break ;;
 			*) break ;;
 		esac
@@ -42,6 +44,8 @@ if $OPT_HELP; then
 	echo "Usage: optirun [options] <application> [application arguments]\n"
 	echo "optirun options list:"
 	echo " -r|-readback|--readback <none|pbo|sync> : Override VGL_READBACK option. (default is \"$VGL_READBACK\")"
+	echo " -c|-compress|--compress <proxy|jpeg|xv| : Override VGL_COMPRESS option. (default is \"$VGL_COMPRESS\")"
+	echo "                          rgb|yuv>"
 	echo " -v|-verbose|--verbose                   : Be verbose, show more technical inforation."
 	echo " -h|-help|--help                         : Show this help."
 	exit 0
@@ -93,7 +97,7 @@ if [ "$DISABLE_SCREENSAVER" = "yes" ]; then
 fi
 
 # Launch selected application through VirtualGL using 32 or 64 bit shared libs.
-vglrun $VGL_VERBOSE -c $VGL_COMPRESS -d $VGL_DISPLAY -ld $OPT_LIB "$@"
+vglrun $VGL_VERBOSE -c $OPT_COMPRESS -d $VGL_DISPLAY -ld $OPT_LIB "$@"
 
 # Removing current pid from pidfile
 if [ "$ON_DEMAND" = "yes" ]; then
