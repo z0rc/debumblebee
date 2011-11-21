@@ -34,7 +34,7 @@ if [ $? -ne 0 ]; then
 	echo "\nPackage manager failed to install VirtualGL." 1>&2
 	exit 4
 fi
-rm -f /tmp/VirtualGL_*.deb
+rm -f /tmp/VirtualGL*.deb
 
 echo "\nInstalling and configuring support files."
 
@@ -131,6 +131,7 @@ echo "\nEnabling debumblebee service."
 update-rc.d debumblebee defaults
 modprobe nvidia
 
+# Installing power save feature for confirmed models.
 if [ -d contrib/power_off_on/$MODEL ]; then
 	echo "\nDetected laptop `dmidecode --string system-manufacturer` $MODEL."
 	echo "Installing powersave support."

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Funtion for launch VirtualGL client with particular compression options.
+# Function for launch VirtualGL client with particular compression options.
 # Otherwise vlgrun won't be able to work.
 vglclient_start () {
 if [ "$1" = "jpeg" -o "$1" = "rgb" -o "$1" = "yuv" ]; then
