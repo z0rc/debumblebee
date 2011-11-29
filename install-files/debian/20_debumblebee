@@ -3,7 +3,7 @@
 case "${1}" in
 	hibernate|suspend)
 		/etc/init.d/debumblebee stop ;;
-	resume|traw)
+	resume|thaw)
 		/etc/init.d/debumblebee start ;;
 esac
 
