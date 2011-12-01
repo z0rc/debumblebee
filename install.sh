@@ -18,6 +18,11 @@
 
 ARCH=`uname -m`
 
+if [ -x "`which lsb_release`" ]; then
+	echo "Unable to find lsb_release, which is usually a part of lsb package."
+	echo "Please install it in your distro preferred way."
+fi
+
 git submodule init && git submodule update
 
 if [ `lsb_release -i -s` = Debian -o `lsb_release -c -s` = debian ]; then
