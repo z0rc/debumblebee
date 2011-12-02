@@ -18,7 +18,7 @@
 
 ARCH=`uname -m`
 
-if [ -x "`which lsb_release`" ]; then
+if [ ! -x "`which lsb_release`" ]; then
 	echo "Unable to find lsb_release, which is usually a part of lsb package."
 	echo "Please install it in your distro preferred way."
 fi
