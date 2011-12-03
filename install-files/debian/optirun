@@ -46,7 +46,7 @@ else
 		case "$1" in
 			-h|-help|--help) OPT_HELP=true ;;
 			-v|-verbose|--verbose) OPT_VERBOSE=yes ;;
-			-r|-readback|--readback) shift;	OPT_READBACK=$1 ;;
+			-r|-readback|--readback) shift; OPT_READBACK=$1 ;;
 			-c|-compress|--compress) shift; OPT_COMPRESS=$1 ;;
 			--) shift; break ;;
 			*) break ;;
@@ -75,12 +75,13 @@ elif [ "$MODULE" != "nouveau" ]; then
 	exit 1
 fi
 
-# Or be verbose if requested.
+# Be verbose if requested.
 if [ "$OPT_VERBOSE" = "yes" ]; then
 	export OPT_VERBOSE=$OPT_VERBOSE
 	VGL_VERBOSE="+v"
 fi
 
+# Export readback mode for vgl
 export VGL_READBACK=$OPT_READBACK
 
 if [ "$ON_DEMAND" = "yes" ]; then
