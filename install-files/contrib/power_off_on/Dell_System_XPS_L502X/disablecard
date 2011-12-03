@@ -53,7 +53,7 @@ acpi_call "\_SB.PCI0.PEG0.PEGP._DSM {0xF8,0xD8,0x86,0xA4,0xDA,0x0B,0x1B,0x47,0xA
 acpi_call "\_SB.PCI0.PEG0.PEGP._PS3"
 
 if [ $final = 1 ]; then
-	echo "Disabling nVidia card succeded."
+	[ "$OPT_VERBOSE" = "yes" ] && echo "Disabling nVidia card succeded."
 	exit 0
 else
 	echo "Disabling nVidia card failed."

@@ -32,7 +32,7 @@ acpi_call "\_SB.PCI0.PEGR.GFX0._PS0"
 modprobe $MODULE
 
 if lsmod | grep -q $MODULE; then
-	echo "Enabling nVidia card succeded."
+	[ "$OPT_VERBOSE" = "yes" ] && echo "Enabling nVidia card succeded."
 	exit 0
 else
 	echo "Enabling nVidia card failed."

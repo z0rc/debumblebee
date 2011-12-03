@@ -52,7 +52,7 @@ final=1
 acpi_call "\_SB.PCI0.P0P2.PEGP._OFF"
 
 if [ $final = 1 ]; then
-	echo "Disabling nVidia card succeded."
+	[ "$OPT_VERBOSE" = "yes" ] && echo "Disabling nVidia card succeded."
 	exit 0
 else
 	echo "Disabling nVidia card failed."
