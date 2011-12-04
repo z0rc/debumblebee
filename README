@@ -70,6 +70,11 @@ If it isn't helping, then try to change "DFP-0" to "CRT-0".
 If you have other issues about GL errors, then it's recommended to check for
 notices about libglx.so and GLX in Xorg log.
 
+I saw many reports about wine crashing when lauched through optirun. This is
+problem of wine package, not debumblebee. First, it's VERY outdated. You may
+pull wine-unstable packages from sid or even better use fresh packages from
+http://dev.carbon-project.org/debian/wine-unstable/
+
 Anyway, if you have any issues please create ticket at
 https://github.com/z0rc/debumblebee
 
