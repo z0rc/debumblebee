@@ -1,0 +1,61 @@
+#!/bin/sh
+
+# This script should contain the command(s) necessary to switch off the nVidia card.
+
+if [ -r /etc/default/debumblebee ]; then
+	. /etc/default/debumblebee
+else
+	MODULE=nvidia
+fi
+
+acpi_call () {
+	echo "$*" > /proc/acpi/call
+	result=$(cat /proc/acpi/call)
+	case "$result" in
+	    failed)
+		echo "acpi_call $* failed." 1>&2
+		final=$(( $final & 0 ))
+		;;
+	    ok)
+		if [ "$OPT_VERBOSE" = "yes" ]; then
+			echo "acpi_call $* succeded."
+		fi
+		final=$(( $final & 1 ))
+		;;
+	    *)
+		if [ "$OPT_VERBOSE" = "yes" ]; then
+			echo "acpi_call $* returned $result."
+		fi
+		final=$(( $final & 1 ))
+		;;
+	esac
+}
+
+rmmod $MODULE
+
+if lsmod | grep -q $MODULE; then
+	echo "Error: could not unload $MODULE module, leaving card turned on." 1>&2
+	exit 1
+fi
+
+modprobe acpi_call
+
+if ! lsmod | grep -q acpi_call; then
+	echo "Error: acpi_call module not loaded." 1>&2
+	exit 1
+fi
+
+final=1
+
+# Replace these command strings depending on your laptop model.
+# These ones work only for ASUS K53SJ.
+#acpi_call "\_SB.PCI0.GFX0._DSM {0xF8,0xD8,0x86,0xA4,0xDA,0x0B,0x1B,0x47,0xA7,0x2B,0x60,0x42,0xA6,0xB5,0xBE,0xE0} 0x100 0x1A {0x1,0x0,0x0,0x3}"
+acpi_call "\_SB.PCI0.PEG0.VID._OFF"
+
+if [ $final = 1 ]; then
+	[ "$OPT_VERBOSE" = "yes" ] && echo "Disabling nVidia card succeded."
+	exit 0
+else
+	echo "Disabling nVidia card failed."
+	exit 1
+fi
