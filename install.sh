@@ -66,6 +66,6 @@ echo
 echo "Installation complete."
 echo "After reboot you should be able to start applications with \"optirun <application>\"."
 echo "You may check the output of \"optirun glxgears -info\" for confirmation that installation was successfull.\n"
-echo "                  https://github.com/z0rc3r/debumblebee\n"
+echo "                  https://github.com/z0rc/debumblebee\n"
 
 exit 0
