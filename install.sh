@@ -16,6 +16,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+echo "This project is deprecated. Don't use it anymore."
+echo "I've prepared Bumblebee 3.0 \"Tumbleweed\" packages for Debian Sid and Wheezy."
+echo "Details and instructions are at http://suwako.nomanga.net/"
+exit 0
+
 ARCH=`uname -m`
 
 if [ ! -x "`which lsb_release`" ]; then
